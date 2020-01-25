@@ -17,8 +17,8 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // スコア・ハイスコアを表示する
-        scoreText.text = score.ToString ();
+        // Show current score
+        //scoreText.text = score.ToString ();
     }
 
     private void Initialize ()
