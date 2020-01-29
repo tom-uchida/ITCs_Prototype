@@ -18,8 +18,8 @@ public class CollisionDetection : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        this.gameObject.transform.Translate (0, 0, 0);
     }
 }
