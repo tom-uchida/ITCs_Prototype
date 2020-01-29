@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DetectCollision4W_L_L : MonoBehaviour
 {
-    private int count = 0;
     public bool isCollision4HandLT=false;
 
     // Start is called before the first frame update

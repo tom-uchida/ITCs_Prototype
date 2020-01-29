@@ -36,15 +36,17 @@ public class Facilitator : MonoBehaviour
         {
             childTransform.gameObject.SetActive(false);
         }
+
+        this.isInit=true;
+        this.isStep_Raise_both_Elbows_to_Shoulder_Level=true;   
+        this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
+        this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        this.isInit=true;
-        this.isStep_Raise_both_Elbows_to_Shoulder_Level=true;   
-        this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
-        this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
+
     }
 
     // Update is called once per frame
@@ -59,14 +61,14 @@ public class Facilitator : MonoBehaviour
         if (this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
             Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
 
-        } else if (this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+        } else if (this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
             Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
-        }
+        } // end if
     }
 
     void Raise_both_Elbows_to_Shoulder_Level(){
         // Display the only both elbows
-        if (isInit) {
+        if (this.isInit) {
             this.elbowLeft.SetActive(true);
             this.elbowRight.SetActive(true);
 
@@ -86,7 +88,8 @@ public class Facilitator : MonoBehaviour
 
     void Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
         // Display the both hand_upper
-        if (isInit) {
+        if (this.isInit) {
+            Debug.Log("Raise");
             this.handLeftUpper.SetActive(true);
             this.handRightUpper.SetActive(true);
 
@@ -97,6 +100,8 @@ public class Facilitator : MonoBehaviour
         bool isCollision4HLU = handLeftUpper.GetComponent<DetectCollision4W_L_U>().isCollision4HandLT;
         bool isCollision4HRU = handRightUpper.GetComponent<DetectCollision4W_R_U>().isCollision4HandRT;
         if (isCollision4HLU && isCollision4HRU) {
+            handLeftUpper.GetComponent<DetectCollision4W_L_U>().isCollision4HandLT = false;
+            handRightUpper.GetComponent<DetectCollision4W_R_U>().isCollision4HandRT = false;
             this.handLeftUpper.SetActive(false);
             this.handRightUpper.SetActive(false);
             
@@ -111,7 +116,8 @@ public class Facilitator : MonoBehaviour
 
     void Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
         // Display the both hand_upper
-        if (isInit) {
+        if (this.isInit) {
+            Debug.Log("Lower");
             this.handLeftLower.SetActive(true);
             this.handRightLower.SetActive(true);
 
@@ -122,6 +128,8 @@ public class Facilitator : MonoBehaviour
         bool isCollision4HLL = handLeftLower.GetComponent<DetectCollision4W_L_L>().isCollision4HandLT;
         bool isCollision4HRL = handRightLower.GetComponent<DetectCollision4W_R_L>().isCollision4HandRT;
         if (isCollision4HLL && isCollision4HRL) {
+            handLeftLower.GetComponent<DetectCollision4W_L_L>().isCollision4HandLT = false;
+            handRightLower.GetComponent<DetectCollision4W_R_L>().isCollision4HandRT = false;
             this.handLeftLower.SetActive(false);
             this.handRightLower.SetActive(false);
             
@@ -130,8 +138,7 @@ public class Facilitator : MonoBehaviour
             // To the next step
             this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
             this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=true;
-            
             this.isInit=true;
         } // end if
-    }
+    } // end func
 }

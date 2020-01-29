@@ -26,7 +26,6 @@ public class ProjectManager : MonoBehaviour
 
         if ( Input.GetKey(KeyCode.Space) ) {
             Invoke("ActivateFacilitator", 3f);
-            
         }
     }
 
