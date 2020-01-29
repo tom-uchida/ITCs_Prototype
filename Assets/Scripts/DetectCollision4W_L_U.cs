@@ -5,6 +5,7 @@ using UnityEngine;
 public class DetectCollision4W_L_U : MonoBehaviour
 {
     private int count = 0;
+    public bool isCollision4HandLT=false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,26 +16,27 @@ public class DetectCollision4W_L_U : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("test");
+
     }
  
-    // 物体がトリガーに接触しとき、１度だけ呼ばれる
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter(Collider other)
     {
-        
-        //Debug.Log("ELBOW_LEFT");
+    
     }
  
-    // 物体がトリガーに接触している間、常に呼ばれる
-    private void OnTriggerStay(Collider collision)
+    private void OnTriggerStay(Collider other)
     {
-        //Sphereの色を赤にする
         GetComponent<Renderer>().material.color = Color.red;
+
+        // Check if the collision target is an hand
+        if ( other.gameObject.name == "joint_HandLT" ) {
+            this.isCollision4HandLT = true;
+        }
     }
- 
-    // 物体がトリガーと離れたとき、１度だけ呼ばれる
-    private void OnTriggerExit(Collider collision)
+
+    private void OnTriggerExit(Collider other)
     {
         GetComponent<Renderer>().material.color = Color.white;
+        this.isCollision4HandLT = false;
     }
 }

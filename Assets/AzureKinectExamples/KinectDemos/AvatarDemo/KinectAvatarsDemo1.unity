@@ -512,7 +512,7 @@ SphereCollider:
   m_GameObject: {fileID: 209499066}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
@@ -552,7 +552,7 @@ SphereCollider:
   m_GameObject: {fileID: 209499069}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
@@ -1262,7 +1262,7 @@ GameObject:
   - component: {fileID: 796242276}
   - component: {fileID: 796242277}
   m_Layer: 0
-  m_Name: WRIST_RIGHT_LOWER
+  m_Name: HAND_RIGHT_LOWER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1370,6 +1370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8500674c505b084facc8da0bfca3612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCollision4HandRT: 0
 --- !u!1001 &801432925
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1715,7 +1716,7 @@ GameObject:
   - component: {fileID: 877376728}
   - component: {fileID: 877376729}
   m_Layer: 0
-  m_Name: WRIST_LEFT_LOWER
+  m_Name: HAND_LEFT_LOWER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1823,6 +1824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c325675ca6a727b4d8bfbac5c66b8129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCollision4HandLT: 0
 --- !u!1 &985422046
 GameObject:
   m_ObjectHideFlags: 0
@@ -2158,7 +2160,7 @@ GameObject:
   - component: {fileID: 1447493767}
   - component: {fileID: 1447493768}
   m_Layer: 0
-  m_Name: WRIST_LEFT_UPPER
+  m_Name: HAND_LEFT_UPPER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2266,6 +2268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dae5bb7c72efa24b89e80b2744d8bb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCollision4HandLT: 0
 --- !u!1 &1482082490
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,6 +2506,44 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1618527293 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100058, guid: ae23d50304c93b9418b65cec8f9fe954,
+    type: 3}
+  m_PrefabInstance: {fileID: 209499065}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1618527294
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618527293}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Center: {x: 0, y: 0.05, z: 0}
+--- !u!1 &1789514311 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100060, guid: ae23d50304c93b9418b65cec8f9fe954,
+    type: 3}
+  m_PrefabInstance: {fileID: 209499065}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1789514312
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789514311}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Center: {x: 0, y: -0.05, z: 0}
 --- !u!1 &1834497582 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100138, guid: ae23d50304c93b9418b65cec8f9fe954,
@@ -2734,7 +2775,7 @@ GameObject:
   - component: {fileID: 2054391325}
   - component: {fileID: 2054391326}
   m_Layer: 0
-  m_Name: WRIST_RIGHT_UPPER
+  m_Name: HAND_RIGHT_UPPER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2842,6 +2883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8672f204924dddf4f84ced908b23bba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCollision4HandRT: 0
 --- !u!1 &2060897184
 GameObject:
   m_ObjectHideFlags: 0
