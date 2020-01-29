@@ -5,7 +5,7 @@ using UnityEngine;
 public class DetectCollision4E_L : MonoBehaviour
 {
     private int count = 0;
-    public bool isCollision=false;
+    public bool isCollision4ElbowLT=false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,21 +19,25 @@ public class DetectCollision4E_L : MonoBehaviour
     
     }
  
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter(Collider other)
     {
         
     }
  
-    private void OnTriggerStay(Collider collision)
+    private void OnTriggerStay(Collider other)
     {
         GetComponent<Renderer>().material.color = Color.red;
-        isCollision = true;
+
+        // Check if the collision target is an elbow
+        if ( other.gameObject.name == "joint_ElbowLT" ) {
+            this.isCollision4ElbowLT = true;
+        }
     }
  
-    private void OnTriggerExit(Collider collision)
+    private void OnTriggerExit(Collider other)
     {
         GetComponent<Renderer>().material.color = Color.white;
 
-        isCollision = false;
+        this.isCollision4ElbowLT = false;
     }
 }
