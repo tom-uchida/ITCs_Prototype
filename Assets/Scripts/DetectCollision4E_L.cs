@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DetectCollision4E_R : MonoBehaviour
+public class DetectCollision4E_L : MonoBehaviour
 {
     private int count = 0;
+    public bool isCollision=false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,26 +16,24 @@ public class DetectCollision4E_R : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("test");
+    
     }
  
-    // 物体がトリガーに接触しとき、１度だけ呼ばれる
     private void OnTriggerEnter(Collider collision)
     {
         
-        //Debug.Log("ELBOW_LEFT");
     }
  
-    // 物体がトリガーに接触している間、常に呼ばれる
     private void OnTriggerStay(Collider collision)
     {
-        //Sphereの色を赤にする
         GetComponent<Renderer>().material.color = Color.red;
+        isCollision = true;
     }
  
-    // 物体がトリガーと離れたとき、１度だけ呼ばれる
     private void OnTriggerExit(Collider collision)
     {
         GetComponent<Renderer>().material.color = Color.white;
+
+        isCollision = false;
     }
 }
