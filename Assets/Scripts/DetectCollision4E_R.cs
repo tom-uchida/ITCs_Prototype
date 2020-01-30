@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DetectCollision4E_R : MonoBehaviour
 {
-    private int count = 0;
     public bool isCollision4ElbowRT=false;
 
     // Start is called before the first frame update
