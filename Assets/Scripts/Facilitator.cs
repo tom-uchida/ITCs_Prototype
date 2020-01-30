@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Facilitator : MonoBehaviour
 {
@@ -40,7 +41,6 @@ public class Facilitator : MonoBehaviour
 
         this.guideText       = GameObject.Find("Guide");
         this.countText       = GameObject.Find("Count");
-        this.scoreLabel      = GameObject.Find("ScoreLabel");
         this.scoreText       = GameObject.Find("Score");
 
         // Get the parent-object
@@ -59,7 +59,7 @@ public class Facilitator : MonoBehaviour
 
         this.countText.SetActive(false);
         this.remainingTimes = 20;
-        this.scoreLabel.SetActive(false);
+        this.scoreText.SetActive(false);
         this.currentScore = 0;
     }
 
@@ -85,17 +85,25 @@ public class Facilitator : MonoBehaviour
             } // end if
 
             // Display remaining times
-            this.countText.GetComponent<Text>().text = this.remainingTimes.ToString();
+            this.countText.GetComponent<Text>().text = "Score: " + this.remainingTimes.ToString() + "/20";
 
             // Display current score point
             this.scoreText.GetComponent<Text>().text = this.currentScore.ToString();
 
+            // To the result scene
+            if (this.remainingTimes == 0) {
+                // Display guide text
+                this.guideText.GetComponent<Text>().text = "Great effort!";
+
+                Invoke("LoadResultScene", 5f);
+            } // end if
+
         } // end if
     } // end func
 
-    void Raise_both_Elbows_to_Shoulder_Level(){
+    private void Raise_both_Elbows_to_Shoulder_Level(){
         // Display guide text
-        this.guideText.GetComponent<Text>().text = "Raise your elbows to your shoulder level and keep that condition!";
+        this.guideText.GetComponent<Text>().text = "Raise both elbows to your shoulder level and keep that condition!";
 
         // Display the only both elbows
         if (this.isInit) {
@@ -115,13 +123,16 @@ public class Facilitator : MonoBehaviour
             this.isInit = true;
 
             this.countText.SetActive(true);
-            this.scoreLabel.SetActive(true);
+            this.scoreText.SetActive(true);
         } // end if
     } // end func
 
-    void Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
+    private void Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
         // Display guide text
-        this.guideText.GetComponent<Text>().text = "Raise both hands with elbows and hands are at right angles";
+        if (this.remainingTimes >= 18)
+            this.guideText.GetComponent<Text>().text = "Raise both hands with elbows and hands are at right angles";
+        else
+            this.guideText.GetComponent<Text>().text = "Raise";
 
         // Display the both hand_upper
         if (this.isInit) {
@@ -160,9 +171,12 @@ public class Facilitator : MonoBehaviour
         } // end if
     } // end func
 
-    void Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
+    private void Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
         // Display guide text
-        this.guideText.GetComponent<Text>().text = "Lower both hands with elbows and hands are at right angles";
+        if (this.remainingTimes >= 17)
+            this.guideText.GetComponent<Text>().text = "Lower both hands with elbows and hands are at right angles";
+        else
+            this.guideText.GetComponent<Text>().text = "Lower";
 
         // Display the both hand_upper
         if (this.isInit) {
@@ -200,4 +214,8 @@ public class Facilitator : MonoBehaviour
             this.isInit = true;
         } // end if
     } // end func
+
+    private void LoadResultScene() {
+		SceneManager.LoadScene("ResultScene", LoadSceneMode.Single);
+	} // end func
 } // end class
