@@ -17,17 +17,19 @@ public class Facilitator : MonoBehaviour
 
     private GameObject guideText;
     private GameObject countText;
-    private int remainingTimes;
-
-    private GameObject scoreLabel;
     private GameObject scoreText;
+    private GameObject adviceLabel;
+    private GameObject adviceText;
 
+    private int remainingTimes;
     private int currentScore;
 
+    public bool isFinish;
     private bool isInit;
     public bool isStep_Raise_both_Elbows_to_Shoulder_Level;
     public bool isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
     public bool isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
+    private bool isActive4Advice;
 
 
     void Awake()
@@ -42,6 +44,9 @@ public class Facilitator : MonoBehaviour
         this.guideText       = GameObject.Find("Guide");
         this.countText       = GameObject.Find("Count");
         this.scoreText       = GameObject.Find("Score");
+        this.adviceLabel     = GameObject.Find("AdviceLabel");
+        this.adviceText      = GameObject.Find("AdviceText");
+
 
         // Get the parent-object
         this.parentObject    = GameObject.Find("Objects4Collision");
@@ -52,15 +57,18 @@ public class Facilitator : MonoBehaviour
             childTransform.gameObject.SetActive(false);
         }
 
-        this.isInit=true;
-        this.isStep_Raise_both_Elbows_to_Shoulder_Level=true;   
-        this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
-        this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles=false;
+        this.isFinish = false;
+        this.isInit = true;
+        this.isStep_Raise_both_Elbows_to_Shoulder_Level = true;   
+        this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
+        this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
+        this.isActive4Advice = false;
 
         this.countText.SetActive(false);
         this.remainingTimes = 20;
         this.scoreText.SetActive(false);
         this.currentScore = 0;
+        this.adviceLabel.SetActive(false);
     }
 
     // Start is called before the first frame update
@@ -72,38 +80,46 @@ public class Facilitator : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (this.isStep_Raise_both_Elbows_to_Shoulder_Level) {
-            Raise_both_Elbows_to_Shoulder_Level();
+        if (!this.isFinish) {
 
-        } else {
+            if (this.isStep_Raise_both_Elbows_to_Shoulder_Level) {
+                Raise_both_Elbows_to_Shoulder_Level();
 
-            if (this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
-                Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
+            } else {
 
-            } else if (this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
-                Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
-            } // end if
+                if (this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+                    Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
 
-            // Display remaining times
-            this.countText.GetComponent<Text>().text = "Score: " + this.remainingTimes.ToString() + "/20";
+                } else if (this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+                    Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
+                } // end if
 
-            // Display current score point
-            this.scoreText.GetComponent<Text>().text = this.currentScore.ToString();
+                // Display remaining times
+                this.countText.GetComponent<Text>().text = this.remainingTimes.ToString();
 
-            // To the result scene
-            if (this.remainingTimes == 0) {
-                // Display guide text
-                this.guideText.GetComponent<Text>().text = "Great effort!";
+                // Display current score point
+                this.scoreText.GetComponent<Text>().text = "Score: " + this.currentScore + "/20";
 
-                Invoke("LoadResultScene", 5f);
+                // To the result scene
+                if (this.remainingTimes == 0) {                
+                    // Display finish message
+                    this.guideText.GetComponent<Text>().fontSize = 200;
+                    this.guideText.GetComponent<Text>().text = "Great effort!";
+
+                    // To the result scene
+                    Invoke("LoadResultScene", 5f);
+                    this.isFinish = true;
+                } // end if
+
             } // end if
 
         } // end if
+
     } // end func
 
     private void Raise_both_Elbows_to_Shoulder_Level(){
         // Display guide text
-        this.guideText.GetComponent<Text>().text = "Raise both elbows to your shoulder level and keep that condition!";
+        this.guideText.GetComponent<Text>().text = "Please RAISE your elbows to your shoulder level.";
 
         // Display the only both elbows
         if (this.isInit) {
@@ -130,9 +146,9 @@ public class Facilitator : MonoBehaviour
     private void Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
         // Display guide text
         if (this.remainingTimes >= 18)
-            this.guideText.GetComponent<Text>().text = "Raise both hands with elbows and hands are at right angles";
+            this.guideText.GetComponent<Text>().text = "Keep where your elbows are, and RAISE your forearms.";
         else
-            this.guideText.GetComponent<Text>().text = "Raise";
+            this.guideText.GetComponent<Text>().text = "RAISE";
 
         // Display the both hand_upper
         if (this.isInit) {
@@ -162,7 +178,19 @@ public class Facilitator : MonoBehaviour
             bool isCollision4ER = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
             if (isCollision4EL && isCollision4ER) {
                 this.currentScore += 1;
-            }
+
+            } else {
+
+                // Display advice text
+                if (!this.isActive4Advice) {
+                    this.adviceText.GetComponent<Text>().text = "Advice: Keep your elbows on your shoulder level.";
+                    this.adviceLabel.SetActive(true);
+                    this.isActive4Advice = true;
+
+                    Invoke("DisactivateAdviceText", 5f);
+                }
+
+            } // end if
 
             // To the next step
             this.isStep_Raise_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
@@ -174,9 +202,9 @@ public class Facilitator : MonoBehaviour
     private void Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
         // Display guide text
         if (this.remainingTimes >= 17)
-            this.guideText.GetComponent<Text>().text = "Lower both hands with elbows and hands are at right angles";
+            this.guideText.GetComponent<Text>().text = "Keep where your elbows are, and LOWER your forearms.";
         else
-            this.guideText.GetComponent<Text>().text = "Lower";
+            this.guideText.GetComponent<Text>().text = "LOWER";
 
         // Display the both hand_upper
         if (this.isInit) {
@@ -206,7 +234,19 @@ public class Facilitator : MonoBehaviour
             bool isCollision4ER = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
             if (isCollision4EL && isCollision4ER) {
                 this.currentScore += 1;
-            }
+
+            } else {
+
+                // Display advice text
+                if (!this.isActive4Advice) {
+                    this.adviceText.GetComponent<Text>().text = "Advice: Keep your elbows on your shoulder level.";
+                    this.adviceLabel.SetActive(true);
+                    this.isActive4Advice = true;
+
+                    Invoke("DisactivateAdviceText", 5f);
+                }
+
+            } // end if
 
             // To the next step
             this.isStep_Lower_both_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
@@ -215,7 +255,12 @@ public class Facilitator : MonoBehaviour
         } // end if
     } // end func
 
+    private void DisactivateAdviceText() {
+        this.adviceLabel.SetActive(false);
+        this.isActive4Advice = false;
+    } // end func
+
     private void LoadResultScene() {
-		SceneManager.LoadScene("ResultScene", LoadSceneMode.Single);
+		SceneManager.LoadScene("Result", LoadSceneMode.Single);
 	} // end func
 } // end class

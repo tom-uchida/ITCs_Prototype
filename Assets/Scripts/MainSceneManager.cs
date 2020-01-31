@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class ProjectManager : MonoBehaviour
+public class MainSceneManager : MonoBehaviour
 {
     public static float elapsed_time=0.0f;
 
@@ -17,6 +17,7 @@ public class ProjectManager : MonoBehaviour
     void Start()
     {
         this.facilitator.SetActive(false);
+        Invoke("ActivateFacilitator", 3f);
     }
 
     // Update is called once per frame
@@ -24,9 +25,8 @@ public class ProjectManager : MonoBehaviour
     {
         elapsed_time += Time.fixedDeltaTime;
 
-        if ( Input.GetKey(KeyCode.Space) ) {
-            Invoke("ActivateFacilitator", 3f);
-        }
+        // if ( Input.GetKey(KeyCode.Space) ) {
+        // }
     }
 
     private void ActivateFacilitator(){
