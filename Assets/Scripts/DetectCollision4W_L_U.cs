@@ -37,5 +37,8 @@ public class DetectCollision4W_L_U : MonoBehaviour
     {
         GetComponent<Renderer>().material.color = Color.white;
         this.isCollision4HandLT = false;
+
+        // Order is important
+        this.gameObject.SetActive(false);
     }
 }
