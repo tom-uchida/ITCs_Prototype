@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DetectCollision4W_R_U : MonoBehaviour
+public class DetectCollision4H_R_D_L : MonoBehaviour
 {
     public bool isCollision4HandRT=false;
 
@@ -37,5 +37,8 @@ public class DetectCollision4W_R_U : MonoBehaviour
     {
         GetComponent<Renderer>().material.color = Color.white;
         this.isCollision4HandRT = false;
+
+        // Order is important
+        this.gameObject.SetActive(false);
     }
 }
