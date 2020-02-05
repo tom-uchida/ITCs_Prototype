@@ -39,6 +39,6 @@ public class DetectCollision4H_L_U : MonoBehaviour
         this.isCollision4HandLT = false;
 
         // Order is important
-        this.gameObject.SetActive(false);
+        //this.gameObject.SetActive(false);
     }
 }

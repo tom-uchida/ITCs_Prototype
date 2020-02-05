@@ -38,6 +38,14 @@ public class Facilitator : MonoBehaviour
     private bool isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
     private bool isActive4Advice;
     private bool isInitRehabilitation;
+    private bool isClear4H_LR_U;
+
+    private bool isClear4H_LR_D_U;
+    private bool isClear4H_LR_M;
+    private bool isClear4H_LR_D_L;
+    private bool isClear4H_LR_L;
+
+
 
 
     void Awake()
@@ -79,6 +87,11 @@ public class Facilitator : MonoBehaviour
         isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
         isActive4Advice = false;
         isInitRehabilitation = true;
+        isClear4H_LR_U   = false;
+        isClear4H_LR_D_U = false;
+        isClear4H_LR_M   = false;
+        isClear4H_LR_D_L = false;
+        isClear4H_LR_L   = false;
 
         countText.SetActive(false);
         remainingTimes = 20;
@@ -166,52 +179,20 @@ public class Facilitator : MonoBehaviour
             DisplayText(guideText, "RAISE");
 
         if (isInitRehabilitation) {
-            isInitRehabilitation = false;
 
-            // Display only the HAND_UPPER objects
+            // Display only the HAND_LR_UPPER objects
             if (isInit) {
                 isInit = false;
                 handLeftUpper.SetActive(true);
                 handRightUpper.SetActive(true);
             } // end if
 
-            // Check if hands are raised
-            bool isCollision4HLU = handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT;
-            bool isCollision4HRU = handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT;
-            if (isCollision4HLU && isCollision4HRU) {
-                // To the next step
-                isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
-                isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
-                isInit = true;
-                
-                // Apply collisions
-                handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT = false;
-                handLeftUpper.GetComponent<Renderer>().material.color = Color.white;
-                handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT = false;
-                handRightUpper.GetComponent<Renderer>().material.color = Color.white;
-                handLeftUpper.SetActive(false);
-                handRightUpper.SetActive(false);
-                
-                // Add score point only if elbows are also raised to shoulder level
-                bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
-                bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
-                if (isCollision4E_L && isCollision4E_R) { // Good motion
-                    // Great! no complaint.
-
-                } else { // Bad motion
-                    // Display advice text
-                    if (!isActive4Advice) {
-                        DisplayText(adviceText, "Keep your elbows on your shoulder level.");
-                        adviceLabel.SetActive(true);
-                        isActive4Advice = true;
-
-                        Invoke("DisactivateAdviceText", 5f);
-                    } // end if
-                } // end if
-            } // end if
+            // Detect collision for HAND_LR_UPPER
+            DetectCollision4HAND_LR_UPPER();
 
         } else {
-            // Display objects for collision detection
+
+            // Display objects for collision detection (Visualize the correct motion)
             if (isInit) {
                 isInit = false;
                 handLeftDiagLower.SetActive(true);
@@ -220,32 +201,17 @@ public class Facilitator : MonoBehaviour
                 handRightMiddle.SetActive(true);
                 handLeftDiagUpper.SetActive(true);
                 handRightDiagUpper.SetActive(true);
+                handLeftUpper.SetActive(true);
+                handRightUpper.SetActive(true);
             } // end if
 
-            // Detect collision for HAND_LR_DIAG_LOWER
-            bool isCollision4H_L_D_L = handLeftDiagLower.GetComponent<DetectCollision4H_L_D_L>().isCollision4HandLT;
-            bool isCollision4H_R_D_L = handRightDiagLower.GetComponent<DetectCollision4H_R_D_L>().isCollision4HandRT;
-            if (!isCrear4H_LR_D_L && isCollision4H_L_D_L && isCollision4H_R_D_L) {
-                isCrear4H_LR_D_L = true;
+            DetectCollision4HAND_LR_DIAG_LOWER();
 
-                // Apply collisions
-                handLeftDiagLower.GetComponent<DetectCollision4H_L_D_L>().isCollision4HandLT = false;
-                handLeftDiagLower.GetComponent<Renderer>().material.color = Color.white;
-                handRightDiagLower.GetComponent<DetectCollision4H_R_D_L>().isCollision4HandRT = false;
-                handRightDiagLower.GetComponent<Renderer>().material.color = Color.white;
-                handLeftDiagLower.SetActive(false);
-                handRightDiagLower.SetActive(false);
-            }
-
-            // Detect collision for HAND_LR_MIDDLE
+            DetectCollision4HAND_LR_MIDDLE();
             
-            // Detect collision for HAND_LR_DIAG_UPPER
+            DetectCollision4HAND_LR_DIAG_UPPER();
 
-            // Detect collision for HAND_LR_UPPER
-                // Count the number of times
-                // remainingTimes -= 1;
-
-                // currentScore += 1;
+            DetectCollision4HAND_LR_UPPER();
 
         } // end if
     } // end Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles()
@@ -257,17 +223,116 @@ public class Facilitator : MonoBehaviour
         else
             DisplayText(guideText, "LOWER");
 
-        // Display the HAND_UPPER objects
+        // Display objects for collision detection (Visualize the correct motion)
         if (isInit) {
             isInit = false;
+            handLeftDiagUpper.SetActive(true);
+            handRightDiagUpper.SetActive(true);
+            handLeftMiddle.SetActive(true);
+            handRightMiddle.SetActive(true);
+            handLeftDiagLower.SetActive(true);
+            handRightDiagLower.SetActive(true);
             handLeftLower.SetActive(true);
             handRightLower.SetActive(true);
         } // end if
 
-        // Check if hands are lowered
-        bool isCollision4HLL = handLeftLower.GetComponent<DetectCollision4H_L_L>().isCollision4HandLT;
-        bool isCollision4HRL = handRightLower.GetComponent<DetectCollision4H_R_L>().isCollision4HandRT;
-        if (isCollision4HLL && isCollision4HRL) {
+        DetectCollision4HAND_LR_DIAG_UPPER();
+
+        DetectCollision4HAND_LR_MIDDLE();
+
+        DetectCollision4HAND_LR_DIAG_LOWER();
+ 
+        DetectCollision4HAND_LR_LOWER();
+
+    } // end Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles()
+
+    private void DetectCollision4HAND_LR_UPPER() {
+        bool isCollision4H_L_U = handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT;
+        bool isCollision4H_R_U = handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT;
+        if (isCollision4H_L_U && isCollision4H_R_U) {
+            // Count the number of times
+            if (!isInitRehabilitation) remainingTimes -= 1;
+
+            // Apply collisions
+            handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT = false;
+            handLeftUpper.GetComponent<Renderer>().material.color = Color.white;
+            handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT = false;
+            handRightUpper.GetComponent<Renderer>().material.color = Color.white;
+            handLeftUpper.SetActive(false);
+            handRightUpper.SetActive(false);
+
+            // Only if elbows are raised to shoulder level
+            bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
+            bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;            
+            if (isCollision4E_L && isCollision4E_R) {
+                // Add score
+                if (!isInitRehabilitation) currentScore += 1;
+
+            } else {
+                // Display advice text
+                if (!isActive4Advice) {
+                    DisplayText(adviceText, "Keep your elbows on your shoulder level.");
+                    adviceLabel.SetActive(true);
+                    isActive4Advice = true;
+
+                    Invoke("DisactivateAdviceText", 5f);
+                } // end if
+            } // end if
+
+            // To the next step
+            if (isInitRehabilitation) isInitRehabilitation = false;
+            isInit = true;
+            isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
+            isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
+        } // end if
+    } // end DetectCollision4HAND_LR_UPPER()
+
+    private void DetectCollision4HAND_LR_DIAG_UPPER() {
+        bool isCollision4H_L_D_U = handLeftDiagUpper.GetComponent<DetectCollision4H_L_D_U>().isCollision4HandLT;
+        bool isCollision4H_R_D_U = handRightDiagUpper.GetComponent<DetectCollision4H_R_D_U>().isCollision4HandRT;
+        if (isCollision4H_L_D_U && isCollision4H_R_D_U) {
+            // Apply collisions
+            handLeftDiagUpper.GetComponent<DetectCollision4H_L_D_U>().isCollision4HandLT = false;
+            handLeftDiagUpper.GetComponent<Renderer>().material.color = Color.white;
+            handRightDiagUpper.GetComponent<DetectCollision4H_R_D_U>().isCollision4HandRT = false;
+            handRightDiagUpper.GetComponent<Renderer>().material.color = Color.white;
+            handLeftDiagUpper.SetActive(false);
+            handRightDiagUpper.SetActive(false);
+        } // end if
+    } // end DetectCollision4HAND_LR_DIAG_UPPER()
+
+    private void DetectCollision4HAND_LR_MIDDLE() {
+        bool isCollision4H_L_M = handLeftMiddle.GetComponent<DetectCollision4H_L_M>().isCollision4HandLT;
+        bool isCollision4H_R_M = handRightMiddle.GetComponent<DetectCollision4H_R_M>().isCollision4HandRT;
+        if (isCollision4H_L_M && isCollision4H_R_M) {
+            // Apply collisions
+            handLeftMiddle.GetComponent<DetectCollision4H_L_M>().isCollision4HandLT = false;
+            handLeftMiddle.GetComponent<Renderer>().material.color = Color.white;
+            handRightMiddle.GetComponent<DetectCollision4H_R_M>().isCollision4HandRT = false;
+            handRightMiddle.GetComponent<Renderer>().material.color = Color.white;
+            handLeftMiddle.SetActive(false);
+            handRightMiddle.SetActive(false);
+        } // end if
+    } // end DetectCollision4HAND_LR_MIDDLE()
+    
+    private void DetectCollision4HAND_LR_DIAG_LOWER() {
+        bool isCollision4H_L_D_L = handLeftDiagLower.GetComponent<DetectCollision4H_L_D_L>().isCollision4HandLT;
+        bool isCollision4H_R_D_L = handRightDiagLower.GetComponent<DetectCollision4H_R_D_L>().isCollision4HandRT;
+        if (isCollision4H_L_D_L && isCollision4H_R_D_L) {
+            // Apply collisions
+            handLeftDiagLower.GetComponent<DetectCollision4H_L_D_L>().isCollision4HandLT = false;
+            handLeftDiagLower.GetComponent<Renderer>().material.color = Color.white;
+            handRightDiagLower.GetComponent<DetectCollision4H_R_D_L>().isCollision4HandRT = false;
+            handRightDiagLower.GetComponent<Renderer>().material.color = Color.white;
+            handLeftDiagLower.SetActive(false);
+            handRightDiagLower.SetActive(false);
+        } // end if
+    } // end DetectCollision4HAND_LR_DIAG_LOWER()
+
+    private void DetectCollision4HAND_LR_LOWER() {
+        bool isCollision4H_L_L = handLeftLower.GetComponent<DetectCollision4H_L_L>().isCollision4HandLT;
+        bool isCollision4H_R_L = handRightLower.GetComponent<DetectCollision4H_R_L>().isCollision4HandRT;
+        if (isCollision4H_L_L && isCollision4H_R_L) {
             // Count the number of times
             remainingTimes -= 1;
 
@@ -278,33 +343,31 @@ public class Facilitator : MonoBehaviour
             handRightLower.GetComponent<Renderer>().material.color = Color.white;
             handLeftLower.SetActive(false);
             handRightLower.SetActive(false);
-            
-            // Add score point only if elbows are raised to shoulder level
-            bool isCollision4EL = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
-            bool isCollision4ER = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
-            if (isCollision4EL && isCollision4ER) {
+
+            // Only if elbows are raised to shoulder level
+            bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
+            bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;            
+            if (isCollision4E_L && isCollision4E_R) {
+                // Add score
                 currentScore += 1;
 
             } else {
-
                 // Display advice text
                 if (!isActive4Advice) {
-                    isActive4Advice = true;
                     DisplayText(adviceText, "Keep your elbows on your shoulder level.");
                     adviceLabel.SetActive(true);
+                    isActive4Advice = true;
 
                     Invoke("DisactivateAdviceText", 5f);
-                }
-
+                } // end if
             } // end if
 
             // To the next step
+            isInit = true;
             isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
             isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
-            isInit = true;
         } // end if
-    } // end Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles()
-
+    } // end DetectCollision4HAND_LR_LOWER()
     private void DisactivateAdviceText() {
         isActive4Advice = false;
         adviceLabel.SetActive(false);

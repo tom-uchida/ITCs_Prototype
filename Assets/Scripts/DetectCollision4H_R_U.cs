@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DetectCollision4H_R_U : MonoBehaviour
 {
-    public bool isCollision4HandRT=false;
+    public bool isCollision4HandRT = false;
 
     // Start is called before the first frame update
     void Start()
