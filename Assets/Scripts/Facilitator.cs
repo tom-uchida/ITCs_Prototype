@@ -24,14 +24,22 @@ public class Facilitator : MonoBehaviour
 
     private GameObject guideText;
     private GameObject countText;
+    private GameObject countGauge;
     private GameObject scoreText;
     private GameObject adviceLabel;
     private GameObject adviceText;
 
+    private GameObject goodEffect;
+    private GameObject badEffect;
+
+    // Added by Kawakami 2/6
+    private GameObject expText;
+
+    public int maxTimes;
     private int remainingTimes;
     private int currentScore;
 
-    public bool isFinishRehabilitation;
+    public bool isFinishedRehabilitation;
     private bool isInit;
     private bool isStep_Raise_Elbows_to_Shoulder_Level;
     private bool isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
@@ -44,9 +52,6 @@ public class Facilitator : MonoBehaviour
     private bool isClear4H_LR_M;
     private bool isClear4H_LR_D_L;
     private bool isClear4H_LR_L;
-
-
-
 
     void Awake()
     {
@@ -66,10 +71,16 @@ public class Facilitator : MonoBehaviour
 
         guideText       = GameObject.Find("Guide");
         countText       = GameObject.Find("Count");
+        countGauge      = GameObject.Find("CountGauge");
         scoreText       = GameObject.Find("Score");
         adviceLabel     = GameObject.Find("AdviceLabel");
         adviceText      = GameObject.Find("AdviceText");
 
+        goodEffect      = GameObject.Find("GoodEffect");
+        badEffect       = GameObject.Find("BadEffect");
+
+        // Added by Kawakami 2/6
+        expText = GameObject.Find("Exp");
 
         // Get the parent-object
         parentObject    = GameObject.Find("Objects4Collision");
@@ -80,7 +91,7 @@ public class Facilitator : MonoBehaviour
             childTransform.gameObject.SetActive(false);
         }
 
-        isFinishRehabilitation = false;
+        isFinishedRehabilitation = false;
         isInit = true;
         isStep_Raise_Elbows_to_Shoulder_Level = true;   
         isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
@@ -93,8 +104,11 @@ public class Facilitator : MonoBehaviour
         isClear4H_LR_D_L = false;
         isClear4H_LR_L   = false;
 
+        countGauge.SetActive(false);
+        //countGauge.GetComponent<Image>().fillAmount = 0;
         countText.SetActive(false);
-        remainingTimes = 20;
+        maxTimes = 20;
+        remainingTimes = maxTimes;
         scoreText.SetActive(false);
         currentScore = 0;
         adviceLabel.SetActive(false);
@@ -109,7 +123,7 @@ public class Facilitator : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!isFinishRehabilitation) {
+        if (!isFinishedRehabilitation) {
 
             if (isStep_Raise_Elbows_to_Shoulder_Level) {
                 Raise_Elbows_to_Shoulder_Level();
@@ -126,16 +140,27 @@ public class Facilitator : MonoBehaviour
                 // Display remaining times
                 countText.GetComponent<Text>().text = remainingTimes.ToString();
 
-                // Display current score point
+                // Update count gauge
+                countGauge.GetComponent<Image>().fillAmount = (float)remainingTimes / (float)maxTimes;
+                //countGauge.GetComponent<Image>().fillAmount = 0.8f;
+
+
+                // Display current score
                 scoreText.GetComponent<Text>().text = "Score: " + currentScore + "/20";
 
                 // To the result scene
                 if (remainingTimes == 0) {
-                    isFinishRehabilitation = true;
+                    isFinishedRehabilitation = true;
 
                     // Display finish message
                     guideText.GetComponent<Text>().fontSize = 200;
                     guideText.GetComponent<Text>().text = "Great effort!";
+
+                    // Added by Kawakami 2/6
+                    // Save current score as Exp
+                    //int exp = PlayerPrefs.GetInt("Exp") + this.currentScore;
+                    //PlayerPrefs.SetInt("Exp", exp);
+                    //this.expText.GetComponent<Text>().text = "Exp: " + PlayerPrefs.GetInt("Exp");
 
                     // To the result scene
                     Invoke("LoadResultScene", 5f);
@@ -167,6 +192,7 @@ public class Facilitator : MonoBehaviour
             isInit = true;
 
             countText.SetActive(true);
+            countGauge.SetActive(true);
             scoreText.SetActive(true);
         } // end if
     } // end Raise_Elbows_to_Shoulder_Level()
@@ -255,9 +281,9 @@ public class Facilitator : MonoBehaviour
 
             // Apply collisions
             handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT = false;
-            handLeftUpper.GetComponent<Renderer>().material.color = Color.white;
+            handLeftUpper.GetComponent<Renderer>().material.color = Color.yellow;
             handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT = false;
-            handRightUpper.GetComponent<Renderer>().material.color = Color.white;
+            handRightUpper.GetComponent<Renderer>().material.color = Color.yellow;
             handLeftUpper.SetActive(false);
             handRightUpper.SetActive(false);
 
@@ -268,9 +294,15 @@ public class Facilitator : MonoBehaviour
                 // Add score
                 if (!isInitRehabilitation) currentScore += 1;
 
+                // Good effect
+                goodEffect.GetComponent<Emit>().IsEmit = true;
+
             } else {
                 // Display advice text
                 if (!isActive4Advice) {
+                    // Bad effect
+                    badEffect.GetComponent<Emit>().IsEmit = true;
+
                     DisplayText(adviceText, "Keep your elbows on your shoulder level.");
                     adviceLabel.SetActive(true);
                     isActive4Advice = true;
@@ -293,9 +325,9 @@ public class Facilitator : MonoBehaviour
         if (isCollision4H_L_D_U && isCollision4H_R_D_U) {
             // Apply collisions
             handLeftDiagUpper.GetComponent<DetectCollision4H_L_D_U>().isCollision4HandLT = false;
-            handLeftDiagUpper.GetComponent<Renderer>().material.color = Color.white;
+            handLeftDiagUpper.GetComponent<Renderer>().material.color = Color.yellow;
             handRightDiagUpper.GetComponent<DetectCollision4H_R_D_U>().isCollision4HandRT = false;
-            handRightDiagUpper.GetComponent<Renderer>().material.color = Color.white;
+            handRightDiagUpper.GetComponent<Renderer>().material.color = Color.yellow;
             handLeftDiagUpper.SetActive(false);
             handRightDiagUpper.SetActive(false);
         } // end if
@@ -307,9 +339,9 @@ public class Facilitator : MonoBehaviour
         if (isCollision4H_L_M && isCollision4H_R_M) {
             // Apply collisions
             handLeftMiddle.GetComponent<DetectCollision4H_L_M>().isCollision4HandLT = false;
-            handLeftMiddle.GetComponent<Renderer>().material.color = Color.white;
+            handLeftMiddle.GetComponent<Renderer>().material.color = Color.yellow;
             handRightMiddle.GetComponent<DetectCollision4H_R_M>().isCollision4HandRT = false;
-            handRightMiddle.GetComponent<Renderer>().material.color = Color.white;
+            handRightMiddle.GetComponent<Renderer>().material.color = Color.yellow;
             handLeftMiddle.SetActive(false);
             handRightMiddle.SetActive(false);
         } // end if
@@ -321,9 +353,9 @@ public class Facilitator : MonoBehaviour
         if (isCollision4H_L_D_L && isCollision4H_R_D_L) {
             // Apply collisions
             handLeftDiagLower.GetComponent<DetectCollision4H_L_D_L>().isCollision4HandLT = false;
-            handLeftDiagLower.GetComponent<Renderer>().material.color = Color.white;
+            handLeftDiagLower.GetComponent<Renderer>().material.color = Color.yellow;
             handRightDiagLower.GetComponent<DetectCollision4H_R_D_L>().isCollision4HandRT = false;
-            handRightDiagLower.GetComponent<Renderer>().material.color = Color.white;
+            handRightDiagLower.GetComponent<Renderer>().material.color = Color.yellow;
             handLeftDiagLower.SetActive(false);
             handRightDiagLower.SetActive(false);
         } // end if
@@ -338,9 +370,9 @@ public class Facilitator : MonoBehaviour
 
             // Apply collisions
             handLeftLower.GetComponent<DetectCollision4H_L_L>().isCollision4HandLT = false;
-            handLeftLower.GetComponent<Renderer>().material.color = Color.white;
+            handLeftLower.GetComponent<Renderer>().material.color = Color.yellow;
             handRightLower.GetComponent<DetectCollision4H_R_L>().isCollision4HandRT = false;
-            handRightLower.GetComponent<Renderer>().material.color = Color.white;
+            handRightLower.GetComponent<Renderer>().material.color = Color.yellow;
             handLeftLower.SetActive(false);
             handRightLower.SetActive(false);
 
@@ -351,9 +383,15 @@ public class Facilitator : MonoBehaviour
                 // Add score
                 currentScore += 1;
 
+                // Good effect
+                goodEffect.GetComponent<Emit>().IsEmit = true;
+
             } else {
                 // Display advice text
                 if (!isActive4Advice) {
+                    // Bad effect
+                    badEffect.GetComponent<Emit>().IsEmit = true;
+
                     DisplayText(adviceText, "Keep your elbows on your shoulder level.");
                     adviceLabel.SetActive(true);
                     isActive4Advice = true;
@@ -368,6 +406,7 @@ public class Facilitator : MonoBehaviour
             isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
         } // end if
     } // end DetectCollision4HAND_LR_LOWER()
+
     private void DisactivateAdviceText() {
         isActive4Advice = false;
         adviceLabel.SetActive(false);
@@ -378,6 +417,6 @@ public class Facilitator : MonoBehaviour
     } // end DisplayText(GameObject _go,  string _text)
 
     private void LoadResultScene() {
-		SceneManager.LoadScene("Result", LoadSceneMode.Single);
-	} // end LoadResultScene()
+	    SceneManager.LoadScene("ResultScene");
+    } // end LoadResultScene()
 } // end class

@@ -9,7 +9,7 @@ public class Emit : MonoBehaviour
     [SerializeField] Vector2 textScale;
     [SerializeField] float easingDuration;
     bool isEmit = false;
-    
+    [SerializeField] KeyCode key;
 
     #region accessor
     public bool IsEmit{
@@ -17,12 +17,14 @@ public class Emit : MonoBehaviour
         set{isEmit = value;}
     }
     #endregion
+
     private void Awake() {
         for(int i = 0; i < ps.Length; i++){
             ps[i].playOnAwake = false;
             ps[i].loop = false;
         }
     }
+    
     void Start()
     {
         
@@ -30,7 +32,7 @@ public class Emit : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.A)){
+        if(Input.GetKeyDown(key)){
             isEmit = true;
         }
         if(isEmit){
@@ -40,10 +42,7 @@ public class Emit : MonoBehaviour
                 var seq = DOTween.Sequence();
                 seq.Append(text.transform.DOScale(new Vector3(textScale.x, textScale.y, 1.0f), easingDuration));
                 seq.Append(text.transform.DOScale(new Vector3(0.0f, 0.0f, 1.0f), easingDuration));
-                
-
             }
-            
         }
         isEmit = false;
     }
