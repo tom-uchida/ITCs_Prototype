@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class ResultSceneSample : MonoBehaviour
 {
-
     //exp
     [SerializeField] Slider expSlider;
     [SerializeField, Range(0.0f, 1.0f)] float expPercent;
@@ -31,6 +31,5 @@ public class ResultSceneSample : MonoBehaviour
         expSlider.value = expPercent;
         expCurValueText.text = (expMaxValue * expPercent).ToString();
         expMaxValueText.text = (expMaxValue).ToString();
-
     }
 }

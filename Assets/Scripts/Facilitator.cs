@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class Facilitator : MonoBehaviour
 {
+    private GameObject userModel;
+
     private GameObject parentObject;
     private GameObject[] objects4Collison;
     private GameObject elbowLeft;
@@ -32,9 +34,6 @@ public class Facilitator : MonoBehaviour
     private GameObject goodEffect;
     private GameObject badEffect;
 
-    // Added by Kawakami 2/6
-    private GameObject expText;
-
     public int maxTimes;
     private int remainingTimes;
     private int currentScore;
@@ -55,6 +54,8 @@ public class Facilitator : MonoBehaviour
 
     void Awake()
     {
+        userModel          = GameObject.Find("User_back");
+
         elbowLeft          = GameObject.Find("ELBOW_LEFT");
         handLeftUpper      = GameObject.Find("HAND_LEFT_UPPER");
         handLeftDiagUpper  = GameObject.Find("HAND_LEFT_DIAG_UPPER");
@@ -79,9 +80,6 @@ public class Facilitator : MonoBehaviour
         goodEffect      = GameObject.Find("GoodEffect");
         badEffect       = GameObject.Find("BadEffect");
 
-        // Added by Kawakami 2/6
-        expText = GameObject.Find("Exp");
-
         // Get the parent-object
         parentObject    = GameObject.Find("Objects4Collision");
 
@@ -105,7 +103,7 @@ public class Facilitator : MonoBehaviour
         isClear4H_LR_L   = false;
 
         countGauge.SetActive(false);
-        //countGauge.GetComponent<Image>().fillAmount = 0;
+        countGauge.GetComponent<Image>().fillAmount = 1.0f;
         countText.SetActive(false);
         maxTimes = 20;
         remainingTimes = maxTimes;
@@ -142,8 +140,6 @@ public class Facilitator : MonoBehaviour
 
                 // Update count gauge
                 countGauge.GetComponent<Image>().fillAmount = (float)remainingTimes / (float)maxTimes;
-                //countGauge.GetComponent<Image>().fillAmount = 0.8f;
-
 
                 // Display current score
                 scoreText.GetComponent<Text>().text = "Score: " + currentScore + "/20";
@@ -158,9 +154,9 @@ public class Facilitator : MonoBehaviour
 
                     // Added by Kawakami 2/6
                     // Save current score as Exp
-                    //int exp = PlayerPrefs.GetInt("Exp") + this.currentScore;
-                    //PlayerPrefs.SetInt("Exp", exp);
-                    //this.expText.GetComponent<Text>().text = "Exp: " + PlayerPrefs.GetInt("Exp");
+                    int exp = PlayerPrefs.GetInt("Exp") + currentScore;
+                    PlayerPrefs.SetInt("Exp", exp);
+                    int exp_final = PlayerPrefs.GetInt("Exp");
 
                     // To the result scene
                     Invoke("LoadResultScene", 5f);
@@ -190,10 +186,6 @@ public class Facilitator : MonoBehaviour
             isStep_Raise_Elbows_to_Shoulder_Level = false;
             isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
             isInit = true;
-
-            countText.SetActive(true);
-            countGauge.SetActive(true);
-            scoreText.SetActive(true);
         } // end if
     } // end Raise_Elbows_to_Shoulder_Level()
 
@@ -205,6 +197,10 @@ public class Facilitator : MonoBehaviour
             DisplayText(guideText, "RAISE");
 
         if (isInitRehabilitation) {
+            // Display count, count gauge and score text
+            countText.SetActive(true);
+            countGauge.SetActive(true);
+            scoreText.SetActive(true);
 
             // Display only the HAND_LR_UPPER objects
             if (isInit) {
@@ -417,6 +413,7 @@ public class Facilitator : MonoBehaviour
     } // end DisplayText(GameObject _go,  string _text)
 
     private void LoadResultScene() {
+        userModel.SetActive(false);
 	    SceneManager.LoadScene("ResultScene");
     } // end LoadResultScene()
 } // end class
