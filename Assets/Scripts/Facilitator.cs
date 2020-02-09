@@ -34,23 +34,22 @@ public class Facilitator : MonoBehaviour
     private GameObject goodEffect;
     private GameObject badEffect;
 
-    public int maxTimes;
+    public static int maxTimes;
     private int remainingTimes;
-    private int currentScore;
+    public static int currentScore;
 
-    public bool isFinishedRehabilitation;
+    private bool isFinishedRehabilitation;
     private bool isInit;
     private bool isStep_Raise_Elbows_to_Shoulder_Level;
     private bool isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
     private bool isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
     private bool isActive4Advice;
     private bool isInitRehabilitation;
-    private bool isClear4H_LR_U;
-
-    private bool isClear4H_LR_D_U;
-    private bool isClear4H_LR_M;
-    private bool isClear4H_LR_D_L;
-    private bool isClear4H_LR_L;
+    // private bool isClear4H_LR_U;
+    // private bool isClear4H_LR_D_U;
+    // private bool isClear4H_LR_M;
+    // private bool isClear4H_LR_D_L;
+    // private bool isClear4H_LR_L;
 
     void Awake()
     {
@@ -96,11 +95,11 @@ public class Facilitator : MonoBehaviour
         isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
         isActive4Advice = false;
         isInitRehabilitation = true;
-        isClear4H_LR_U   = false;
-        isClear4H_LR_D_U = false;
-        isClear4H_LR_M   = false;
-        isClear4H_LR_D_L = false;
-        isClear4H_LR_L   = false;
+        // isClear4H_LR_U   = false;
+        // isClear4H_LR_D_U = false;
+        // isClear4H_LR_M   = false;
+        // isClear4H_LR_D_L = false;
+        // isClear4H_LR_L   = false;
 
         countGauge.SetActive(false);
         countGauge.GetComponent<Image>().fillAmount = 1.0f;
@@ -406,14 +405,24 @@ public class Facilitator : MonoBehaviour
     private void DisactivateAdviceText() {
         isActive4Advice = false;
         adviceLabel.SetActive(false);
-    } // end DisactivateAdviceText()
+    }
 
     private void DisplayText(GameObject _go,  string _text) {
         _go.GetComponent<Text>().text = _text;
-    } // end DisplayText(GameObject _go,  string _text)
+    }
 
     private void LoadResultScene() {
         userModel.SetActive(false);
 	    SceneManager.LoadScene("ResultScene");
-    } // end LoadResultScene()
+    }
+
+    public static int getCurrentScore() {
+        return currentScore;
+    }
+
+    public static float getAccuracyRate() {
+        //Debug.Log(maxTimes);
+        return currentScore / maxTimes;
+    }
+    
 } // end class
