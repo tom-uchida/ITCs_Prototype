@@ -5,6 +5,7 @@ using UnityEngine;
 public class DetectCollision4H_R_D_U : MonoBehaviour
 {
     public bool isCollision4HandRT = false;
+    public bool isCollisionEnter4HandRT = false;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +21,10 @@ public class DetectCollision4H_R_D_U : MonoBehaviour
  
     private void OnTriggerEnter(Collider other)
     {
-    
+        // Check if the collision target is an hand
+        if ( other.gameObject.name == "joint_HandRT" ) {
+            isCollisionEnter4HandRT = true;
+        }
     }
  
     private void OnTriggerStay(Collider other)
@@ -29,16 +33,16 @@ public class DetectCollision4H_R_D_U : MonoBehaviour
 
         // Check if the collision target is an hand
         if ( other.gameObject.name == "joint_HandRT" ) {
-            this.isCollision4HandRT = true;
+            isCollision4HandRT = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         GetComponent<Renderer>().material.color = Color.yellow;
-        this.isCollision4HandRT = false;
+        isCollision4HandRT = false;
 
         // Order is important
-        this.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 }
