@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class CircleSlider : MonoBehaviour
 {
-    [SerializeField] [Range(0.0f, 1.0f)] float rate;
-    [SerializeField] Image slider;
-    [SerializeField] Text percent;
+    [SerializeField] [Range(0.0f, 1.0f)] float rate = 0.0f;
+    [SerializeField] Image slider = null;
+    [SerializeField] Text percent = null;
     private float timeElapsed;
+    private bool isFinishedCircleSliderAnimation;
 
     #region accessor
     public float Rate{
@@ -21,6 +22,7 @@ public class CircleSlider : MonoBehaviour
     void Start()
     {
         timeElapsed = 0.0f;
+        isFinishedCircleSliderAnimation = false;
         percent.text = (rate*100.0f).ToString() + "%";
     }
 
@@ -28,10 +30,16 @@ public class CircleSlider : MonoBehaviour
     {
         timeElapsed += Time.deltaTime;
 
-        if (ResultSceneManager.isFinishedExp) {
+        if (ResultSceneManager.isFinishedExpSliderAnimation) {
             if (slider.fillAmount < rate) {
                 slider.fillAmount += Time.deltaTime;
+            } else {
+                isFinishedCircleSliderAnimation = true;
             }
         }
+    }
+
+    public bool GetIsFinishedCircleSliderAnimation() {
+        return isFinishedCircleSliderAnimation;
     }
 }

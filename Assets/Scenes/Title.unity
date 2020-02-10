@@ -1050,6 +1050,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bf95194c3beaa1429508919ac579f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  expSlider: {fileID: 918337035}
+  expPercent: 0
+  expCurValueText: {fileID: 358874914}
+  expMaxValueText: {fileID: 683835084}
+  expMaxValue: 100
 --- !u!1 &683835082
 GameObject:
   m_ObjectHideFlags: 0
