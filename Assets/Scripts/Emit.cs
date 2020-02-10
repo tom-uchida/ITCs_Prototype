@@ -5,12 +5,12 @@ using DG.Tweening;
 
 public class Emit : MonoBehaviour
 {
-    [SerializeField] ParticleSystem[] ps;
-    [SerializeField] GameObject text;
-    [SerializeField] Vector2 textScale;
-    [SerializeField] float easingDuration;
+    [SerializeField] ParticleSystem[] ps = null;
+    [SerializeField] GameObject text = null;
+    [SerializeField] Vector2 textScale = new Vector2(0, 0);
+    [SerializeField] float easingDuration = 0.0f;
     bool isEmit = false;
-    [SerializeField] KeyCode key;
+    [SerializeField] KeyCode key = KeyCode.A;
 
     #region accessor
     public bool IsEmit{
@@ -21,14 +21,17 @@ public class Emit : MonoBehaviour
 
     private void Awake() {
         for(int i = 0; i < ps.Length; i++){
-            ps[i].playOnAwake = false;
-            ps[i].loop = false;
+            ParticleSystem.MainModule main = ps[i].GetComponent<ParticleSystem>().main;
+            main.playOnAwake = false;
+            main.loop = false;
+            // ps[i].playOnAwake = false;
+            // ps[i].loop = false;
         }
     }
     
     void Start()
     {
-        
+
     }
 
     void Update()

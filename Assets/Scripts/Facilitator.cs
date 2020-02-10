@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class Facilitator : MonoBehaviour
 {
     private GameObject userModel;
+    private GameObject gestureListener;
+    private GameObject kinectController;
 
     private GameObject parentObject;
     private GameObject[] objects4Collison;
@@ -46,11 +48,13 @@ public class Facilitator : MonoBehaviour
     private bool isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
     private bool isActive4Advice;
     private bool isInitRehabilitation;
-    private bool isClear4H_LR_U;
+    //private bool isClear4H_LR_U;
     private bool isClear4H_LR_D_U;
     private bool isClear4H_LR_M;
     private bool isClear4H_LR_D_L;
-    private bool isClear4H_LR_L;
+    //private bool isClear4H_LR_L;
+    private bool isClear4ELBOW;
+    private bool isClear4HAND;
 
     private AudioSource audioSource;
     public AudioClip goodAudio;
@@ -61,6 +65,8 @@ public class Facilitator : MonoBehaviour
     void Awake()
     {
         userModel          = GameObject.Find("User_back");
+        gestureListener    = GameObject.Find("GestureListener");
+        kinectController   = GameObject.Find("KinectController");
 
         elbowLeft          = GameObject.Find("ELBOW_LEFT");
         handLeftUpper      = GameObject.Find("HAND_LEFT_UPPER");
@@ -103,11 +109,13 @@ public class Facilitator : MonoBehaviour
         isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
         isActive4Advice = false;
         isInitRehabilitation = true;
-        isClear4H_LR_U   = false;
-        isClear4H_LR_D_U = false;
-        isClear4H_LR_M   = false;
-        isClear4H_LR_D_L = false;
-        isClear4H_LR_L   = false;
+        //isClear4H_LR_U    = false;
+        isClear4H_LR_D_U    = false;
+        isClear4H_LR_M      = false;
+        isClear4H_LR_D_L    = false;
+        //isClear4H_LR_L    = false;
+        isClear4ELBOW       = false;
+        isClear4HAND        = false;
 
         countGauge.SetActive(false);
         countGauge.GetComponent<Image>().fillAmount = 1.0f;
@@ -124,7 +132,7 @@ public class Facilitator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        userModel.SetActive(true);
     }
 
     // Update is called once per frame
@@ -158,8 +166,8 @@ public class Facilitator : MonoBehaviour
                     isFinishedRehabilitation = true;
 
                     // Display finish message
-                    guideText.GetComponent<Text>().fontSize = 200;
-                    guideText.GetComponent<Text>().text = "Great effort!";
+                    // guideText.GetComponent<Text>().fontSize = 150;
+                    guideText.GetComponent<Text>().text = "";
 
                     // Finish effect and audio
                     finishEffect.GetComponent<Emit>().IsEmit = true;
@@ -167,9 +175,8 @@ public class Facilitator : MonoBehaviour
 
                     // Added by Kawakami 2/6
                     // Save current score as Exp
-                    int exp = PlayerPrefs.GetInt("Exp") + currentScore;
-                    PlayerPrefs.SetInt("Exp", exp);
-                    int exp_final = PlayerPrefs.GetInt("Exp");
+                    int expCurValue = PlayerPrefs.GetInt("Exp") + currentScore;
+                    PlayerPrefs.SetInt("Exp", expCurValue);
 
                     // To the result scene
                     Invoke("LoadResultScene", 5f);
@@ -305,28 +312,72 @@ public class Facilitator : MonoBehaviour
 
             // Only if elbows are raised to shoulder level
             bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
-            bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;            
-            if (isCollision4E_L && isCollision4E_R) {
-                // Add score
-                if (!isInitRehabilitation) currentScore += 1;
+            bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
+            if (isInitRehabilitation) {
+                if (isCollision4E_L && isCollision4E_R) {
+                    // Add score
+                    if (!isInitRehabilitation) currentScore += 1;
 
-                // Good effect and audio
-                goodEffect.GetComponent<Emit>().IsEmit = true;
-                audioSource.PlayOneShot(goodAudio);
+                    // Good effect and audio
+                    goodEffect.GetComponent<Emit>().IsEmit = true;
+                    audioSource.PlayOneShot(goodAudio);
 
-            } else {
-                // Display advice text
-                if (!isActive4Advice) {
+                } else {
                     // Bad effect and audio
                     badEffect.GetComponent<Emit>().IsEmit = true;
                     audioSource.PlayOneShot(badAudio);
 
-                    DisplayText(adviceText, "Keep your elbows on your shoulder level.");
-                    adviceLabel.SetActive(true);
-                    isActive4Advice = true;
+                    // Display advice text
+                    //if (!isActive4Advice) {
+                        DisplayText(adviceText, "Keep your elbows on your shoulder level.");
+                        adviceLabel.SetActive(true);
+                        isActive4Advice = true;
 
-                    Invoke("DisactivateAdviceText", 5f);
+                        Invoke("DisactivateAdviceText", 5f);
+                    //} // end if
                 } // end if
+
+            } else {        
+                if (isCollision4E_L && isCollision4E_R) {
+                    isClear4ELBOW = true;
+                } else {
+                    // Display advice text
+                    //if (!isActive4Advice) {
+                        DisplayText(adviceText, "Keep your elbows on your shoulder level.");
+                        adviceLabel.SetActive(true);
+                        isActive4Advice = true;
+
+                        Invoke("DisactivateAdviceText", 5f);
+                    //} // end if
+                } // end if
+                
+                if (isClear4H_LR_D_L && isClear4H_LR_M && isClear4H_LR_D_U) {
+                    isClear4HAND = true;
+                } else {
+                    // Display advice text
+                    //if (!isActive4Advice) {
+                        DisplayText(adviceText, "Please make your elbows a right angle.");
+                        adviceLabel.SetActive(true);
+                        isActive4Advice = true;
+
+                        Invoke("DisactivateAdviceText", 5f);
+                    //} // end if
+                } // end if
+
+                if (isClear4ELBOW && isClear4HAND) {
+                    // Add score
+                    if (!isInitRehabilitation) currentScore += 1;
+
+                    // Good effect and audio
+                    goodEffect.GetComponent<Emit>().IsEmit = true;
+                    audioSource.PlayOneShot(goodAudio);
+
+                } else {
+                    // Bad effect and audio
+                    badEffect.GetComponent<Emit>().IsEmit = true;
+                    audioSource.PlayOneShot(badAudio);
+                } // end if
+
             } // end if
 
             // To the next step
@@ -424,26 +475,43 @@ public class Facilitator : MonoBehaviour
             bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
             bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;            
             if (isCollision4E_L && isCollision4E_R) {
+                isClear4ELBOW = true;
+            } else {
+                // Display advice text
+                //if (!isActive4Advice) {
+                    DisplayText(adviceText, "Keep your elbows on your shoulder level.");
+                    adviceLabel.SetActive(true);
+                    isActive4Advice = true;
+                    
+                    Invoke("DisactivateAdviceText", 5f);
+                //} // end if
+            } // end if
+                
+            if (isClear4H_LR_D_L && isClear4H_LR_M && isClear4H_LR_D_U) {
+                isClear4HAND = true;
+            } else {
+                // Display advice text
+                //if (!isActive4Advice) {
+                    DisplayText(adviceText, "Please make your elbows a right angle.");
+                    adviceLabel.SetActive(true);
+                    isActive4Advice = true;
+
+                    Invoke("DisactivateAdviceText", 5f);
+                //} // end if
+            } // end if
+
+            if (isClear4ELBOW && isClear4HAND) {
                 // Add score
-                currentScore += 1;
+                if (!isInitRehabilitation) currentScore += 1;
 
                 // Good effect and audio
                 goodEffect.GetComponent<Emit>().IsEmit = true;
                 audioSource.PlayOneShot(goodAudio);
 
             } else {
-                // Display advice text
-                if (!isActive4Advice) {
-                    // Bad effect and audio
-                    badEffect.GetComponent<Emit>().IsEmit = true;
-                    audioSource.PlayOneShot(badAudio);
-
-                    DisplayText(adviceText, "Keep your elbows on your shoulder level.");
-                    adviceLabel.SetActive(true);
-                    isActive4Advice = true;
-
-                    Invoke("DisactivateAdviceText", 5f);
-                } // end if
+                // Bad effect and audio
+                badEffect.GetComponent<Emit>().IsEmit = true;
+                audioSource.PlayOneShot(badAudio);
             } // end if
 
             // To the next step
@@ -454,11 +522,14 @@ public class Facilitator : MonoBehaviour
     } // end DetectCollision4HAND_LR_LOWER()
 
     private void ResetIsClear() {
-        isClear4H_LR_U = false;
-        isClear4H_LR_D_U = false;
-        isClear4H_LR_M = false;
-        isClear4H_LR_D_L = false;
-        isClear4H_LR_L = false;
+        //isClear4H_LR_U    = false;
+        isClear4H_LR_D_U    = false;
+        isClear4H_LR_M      = false;
+        isClear4H_LR_D_L    = false;
+        //isClear4H_LR_L    = false;
+
+        isClear4ELBOW       = false;
+        isClear4HAND        = false;
     }
 
     private void DisactivateAdviceText() {
@@ -472,16 +543,17 @@ public class Facilitator : MonoBehaviour
 
     private void LoadResultScene() {
         userModel.SetActive(false);
-	    SceneManager.LoadScene("ResultScene");
+        gestureListener.SetActive(false);
+        kinectController.SetActive(false);
+        SceneManager.LoadScene("ResultScene");
     }
 
-    public static int getCurrentScore() {
-        return currentScore;
+    public static float getCurrentScore() {
+        return (float)currentScore;
     }
 
     public static float getAccuracyRate() {
-        //Debug.Log(maxTimes);
-        return currentScore / maxTimes;
+        return (float)currentScore / (float)maxTimes;
     }
     
 } // end class
