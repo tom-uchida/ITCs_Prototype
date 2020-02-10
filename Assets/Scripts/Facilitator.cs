@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class Facilitator : MonoBehaviour
 {
     private GameObject userModel;
+    private GameObject gestureListener;
+    private GameObject kinectController;
 
     private GameObject parentObject;
     private GameObject[] objects4Collison;
@@ -61,6 +63,8 @@ public class Facilitator : MonoBehaviour
     void Awake()
     {
         userModel          = GameObject.Find("User_back");
+        gestureListener    = GameObject.Find("GestureListener");
+        kinectController   = GameObject.Find("KinectController");
 
         elbowLeft          = GameObject.Find("ELBOW_LEFT");
         handLeftUpper      = GameObject.Find("HAND_LEFT_UPPER");
@@ -472,14 +476,16 @@ public class Facilitator : MonoBehaviour
 
     private void LoadResultScene() {
         userModel.SetActive(false);
-	    SceneManager.LoadScene("ResultScene");
+        gestureListener.SetActive(false);
+        kinectController.SetActive(false);
+        SceneManager.LoadScene("ResultScene");
     }
 
     public static int getCurrentScore() {
         return currentScore;
     }
 
-    public static float getAccuracyRate() {
+    public static int getAccuracyRate() {
         //Debug.Log(maxTimes);
         return currentScore / maxTimes;
     }

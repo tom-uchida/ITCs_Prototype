@@ -16,8 +16,11 @@ public class ResultSceneManager : MonoBehaviour
     // Other parames
     [SerializeField] CircleSlider[] circleSlider;
     [SerializeField] [Range(0.0f, 1.0f)] float[] percent;
+    [SerializeField] [Range(0.0f, 1.0f)] float[] rate;
 
     private bool isInit;
+    public static bool isFinishedExp;
+    private float timeElapsed;
 
     void Awake() {
         
@@ -25,30 +28,34 @@ public class ResultSceneManager : MonoBehaviour
     
     void Start()
     {
-        isInit = true;   
+        isInit = true; 
+        isFinishedExp = false;
+        timeElapsed = 0.0f;
+
+        // Exp
+        expSlider.value = 0.0f;
+        float expCurValue = (float)Facilitator.getCurrentScore();
+        //float expCurValue = 67;
+        expPercent = expCurValue / expMaxValue;
+        expCurValueText.text = (expMaxValue * expPercent).ToString();
+        expMaxValueText.text = (expMaxValue).ToString();
+
+        // Circle Slider
+        circleSlider[0].Rate = (float)Facilitator.getAccuracyRate();
+        //circleSlider[0].Rate = 0.8f;
+        circleSlider[1].Rate = 1.0f;
+        circleSlider[2].Rate = 0.0f;
     }
 
     void Update()
     {
-        if (isInit) {
-            // Get score
-             float expCurValue = (float)Facilitator.getCurrentScore();
-
-            // Exp
-            expPercent = expCurValue / expMaxValue;
-            expSlider.value = expPercent;
-            expCurValueText.text = (expMaxValue * expPercent).ToString();
-            expMaxValueText.text = (expMaxValue).ToString();
-
-            // Circle
-            // for (int i = 0; i < circleSlider.Length; i++) {
-            //     circleSlider[i].Rate = percent[i];
-            // }
-            circleSlider[0].Rate = Facilitator.getAccuracyRate();
-            circleSlider[1].Rate = 1.0f;
-            circleSlider[2].Rate = 0.0f;
-
-            isInit = false;
+        timeElapsed += Time.deltaTime;
+        if (timeElapsed >= 1.0f) {
+            if (expSlider.value <= expPercent) {
+                expSlider.value += Time.deltaTime;
+            } else {
+                isFinishedExp = true;
+            }
         } // end if
     }
 
