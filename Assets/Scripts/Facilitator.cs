@@ -57,10 +57,12 @@ public class Facilitator : MonoBehaviour
     private bool isClear4HAND;
 
     private AudioSource audioSource;
-    public AudioClip goodAudio;
-    public AudioClip badAudio;
-    public AudioClip finishAudio;
+    public AudioClip goodAudio, badAudio, finishAudio;
     public AudioClip doAudio, reAudio, miAudio;
+
+    // Added by Kawakami
+    public TitleSceneManager titleSceneManager;
+    private int exerciseNum;
 
     void Awake()
     {
@@ -122,10 +124,8 @@ public class Facilitator : MonoBehaviour
         countText.SetActive(false);
 
         // Added by Kawakami
-        // exerciseNum = (int)titleSceneManager.GetExerciseNum();
-        // maxTimes = exerciseNum;
-        
-        maxTimes = 20;
+        exerciseNum = (int)titleSceneManager.GetExerciseNum();
+        maxTimes = exerciseNum; // maxTimes = 20;
         remainingTimes = maxTimes;
         scoreText.SetActive(false);
         currentScore = 0;

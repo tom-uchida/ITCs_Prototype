@@ -53,7 +53,7 @@ public class TitleSceneManager : MonoBehaviour
         }
 
         // Added by Kawakami
-        exerciseNumText.text = exerciseNumSlider.value.ToString() + "/20";
+        exerciseNumText.text = exerciseNumSlider.value.ToString();
     }
 
     // Added by Kawakami
@@ -64,6 +64,10 @@ public class TitleSceneManager : MonoBehaviour
 
 	public void ToMainScene() {
 		SceneManager.LoadScene ("Main");
+	}
+
+    public void ToRaiseLowerElbowlessScene() {
+		SceneManager.LoadScene ("Raise_Lower_Elbowless");
 	}
 
     // End
