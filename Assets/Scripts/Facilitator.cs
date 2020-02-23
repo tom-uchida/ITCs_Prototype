@@ -120,6 +120,11 @@ public class Facilitator : MonoBehaviour
         countGauge.SetActive(false);
         countGauge.GetComponent<Image>().fillAmount = 1.0f;
         countText.SetActive(false);
+
+        // Added by Kawakami
+        // exerciseNum = (int)titleSceneManager.GetExerciseNum();
+        // maxTimes = exerciseNum;
+        
         maxTimes = 20;
         remainingTimes = maxTimes;
         scoreText.SetActive(false);
@@ -545,7 +550,7 @@ public class Facilitator : MonoBehaviour
         userModel.SetActive(false);
         gestureListener.SetActive(false);
         kinectController.SetActive(false);
-        SceneManager.LoadScene("ResultScene");
+        SceneManager.LoadScene("Result");
     }
 
     public static float getCurrentScore() {

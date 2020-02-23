@@ -19,5 +19,6 @@ Desktop.ini
 /Temp
 *.dll
 *.onnx
-UnityCrashHandler64.exe
+ITCs_prototype_v1_Data/
 MonoBleedingEdge/
+*.exe
