@@ -11,9 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main.unity
     guid: 5f873d6d0f5cc414db5e08ec211e3137
-  - enabled: 0
-    path: Assets/Scenes/Result.unity
-    guid: fd77569e3ae3a6d4e8a61267d8dcf6e6
+  - enabled: 1
+    path: Assets/Scenes/Raise_Lower_Elbowless.unity
+    guid: 3202cc5c7c06adc4d95548ec2fb45657
   - enabled: 1
     path: Assets/Scenes/Result.unity
     guid: c3b574ad616a79142b323b34707adfae

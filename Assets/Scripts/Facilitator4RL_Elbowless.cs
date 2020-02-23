@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class Facilitator : MonoBehaviour
+public class Facilitator4RL_Elbowless : MonoBehaviour
 {
     private GameObject userModel;
     private GameObject gestureListener;
@@ -12,14 +12,12 @@ public class Facilitator : MonoBehaviour
 
     private GameObject parentObject;
     private GameObject[] objects4Collison;
-    private GameObject elbowLeft;
     private GameObject handLeftUpper;
     private GameObject handLeftDiagUpper;
     private GameObject handLeftMiddle;
     private GameObject handLeftDiagLower;
     private GameObject handLeftLower;
 
-    private GameObject elbowRight;
     private GameObject handRightUpper;
     private GameObject handRightDiagUpper;
     private GameObject handRightMiddle;
@@ -43,17 +41,13 @@ public class Facilitator : MonoBehaviour
 
     private bool isFinishedRehabilitation;
     private bool isInit;
-    private bool isStep_Raise_Elbows_to_Shoulder_Level;
-    private bool isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
-    private bool isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles;
+    private bool isStep_Raise_Hands;
+    private bool isStep_Lower_Hands;
     private bool isActive4Advice;
     private bool isInitRehabilitation;
-    //private bool isClear4H_LR_U;
     private bool isClear4H_LR_D_U;
     private bool isClear4H_LR_M;
     private bool isClear4H_LR_D_L;
-    //private bool isClear4H_LR_L;
-    private bool isClear4ELBOW;
     private bool isClear4HAND;
 
     private AudioSource audioSource;
@@ -69,14 +63,12 @@ public class Facilitator : MonoBehaviour
         gestureListener    = GameObject.Find("GestureListener");
         kinectController   = GameObject.Find("KinectController");
 
-        elbowLeft          = GameObject.Find("ELBOW_LEFT");
         handLeftUpper      = GameObject.Find("HAND_LEFT_UPPER");
         handLeftDiagUpper  = GameObject.Find("HAND_LEFT_DIAG_UPPER");
         handLeftMiddle     = GameObject.Find("HAND_LEFT_MIDDLE");
         handLeftDiagLower  = GameObject.Find("HAND_LEFT_DIAG_LOWER");
         handLeftLower      = GameObject.Find("HAND_LEFT_LOWER");
 
-        elbowRight         = GameObject.Find("ELBOW_RIGHT");
         handRightUpper     = GameObject.Find("HAND_RIGHT_UPPER");
         handRightDiagUpper = GameObject.Find("HAND_RIGHT_DIAG_UPPER");
         handRightMiddle    = GameObject.Find("HAND_RIGHT_MIDDLE");
@@ -104,18 +96,14 @@ public class Facilitator : MonoBehaviour
         }
 
         isFinishedRehabilitation = false;
-        isInit = true;
-        isStep_Raise_Elbows_to_Shoulder_Level = true;   
-        isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
-        isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
+        isInit = true; 
+        isStep_Raise_Hands = true;
+        isStep_Lower_Hands = false;
         isActive4Advice = false;
         isInitRehabilitation = true;
-        //isClear4H_LR_U    = false;
         isClear4H_LR_D_U    = false;
         isClear4H_LR_M      = false;
         isClear4H_LR_D_L    = false;
-        //isClear4H_LR_L    = false;
-        isClear4ELBOW       = false;
         isClear4HAND        = false;
 
         countGauge.SetActive(false);
@@ -144,89 +132,56 @@ public class Facilitator : MonoBehaviour
     {
         if (!isFinishedRehabilitation) {
 
-            if (isStep_Raise_Elbows_to_Shoulder_Level) {
-                Raise_Elbows_to_Shoulder_Level();
+            if (isStep_Raise_Hands) {
+                Raise_Hands();
 
-            } else {
+            } else if (isStep_Lower_Hands) {
+                Lower_Hands();
+            } // end if
 
-                if (isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
-                    Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
+            // Display remaining times
+            countText.GetComponent<Text>().text = remainingTimes.ToString();
 
-                } else if (isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
-                    Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles();
-                } // end if
+            // Update count gauge
+            countGauge.GetComponent<Image>().fillAmount = (float)remainingTimes / (float)maxTimes;
 
-                // Display remaining times
-                countText.GetComponent<Text>().text = remainingTimes.ToString();
+            // Display current score
+            scoreText.GetComponent<Text>().text = "Score: " + currentScore;
 
-                // Update count gauge
-                countGauge.GetComponent<Image>().fillAmount = (float)remainingTimes / (float)maxTimes;
+            // To the result scene
+            if (remainingTimes == 0) {
+                isFinishedRehabilitation = true;
 
-                // Display current score
-                scoreText.GetComponent<Text>().text = "Score: " + currentScore;
+                // Display finish message
+                // guideText.GetComponent<Text>().fontSize = 150;
+                guideText.GetComponent<Text>().text = "";
+
+                // Finish effect and audio
+                finishEffect.GetComponent<Emit>().IsEmit = true;
+                audioSource.PlayOneShot(finishAudio);
+
+                // Added by Kawakami 2/6
+                // Save current score as Exp
+                int expCurValue = PlayerPrefs.GetInt("Exp") + currentScore;
+                PlayerPrefs.SetInt("Exp", expCurValue);
 
                 // To the result scene
-                if (remainingTimes == 0) {
-                    isFinishedRehabilitation = true;
-
-                    // Display finish message
-                    // guideText.GetComponent<Text>().fontSize = 150;
-                    guideText.GetComponent<Text>().text = "";
-
-                    // Finish effect and audio
-                    finishEffect.GetComponent<Emit>().IsEmit = true;
-                    audioSource.PlayOneShot(finishAudio);
-
-                    // Added by Kawakami 2/6
-                    // Save current score as Exp
-                    int expCurValue = PlayerPrefs.GetInt("Exp") + currentScore;
-                    PlayerPrefs.SetInt("Exp", expCurValue);
-
-                    // To the result scene
-                    Invoke("LoadResultScene", 5f);
-                } // end if
-
+                Invoke("LoadResultScene", 5f);
             } // end if
 
         } // end if
 
     } // end func
 
-    private void Raise_Elbows_to_Shoulder_Level(){
-        DisplayText(guideText, "Please RAISE your elbows to your shoulder level.");
-
-        // Display the only LR_ELBOW objects
-        if (isInit) {
-            isInit = false;
-            elbowLeft.SetActive(true);
-            elbowRight.SetActive(true);
-        } // end if
-            
-        // Check if elbows are raised to shoulder level
-        bool isCollision4EL = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
-        bool isCollision4ER = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
-        if (isCollision4EL && isCollision4ER) {
-            // To the next step
-            isStep_Raise_Elbows_to_Shoulder_Level = false;
-            isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
-            isInit = true;
-
-            // Good effect and audio
-            goodEffect.GetComponent<Emit>().IsEmit = true;
-            audioSource.PlayOneShot(goodAudio);
-
-        } // end if
-    } // end Raise_Elbows_to_Shoulder_Level()
-
-    private void Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
+    private void Raise_Hands(){
         // Display guide text
-        if (remainingTimes >= maxTimes-2)
-            DisplayText(guideText, "Keep where your elbows are, and RAISE your forearms.");
+        if (remainingTimes >= exerciseNum-2)
+            DisplayText(guideText, "RAISE your forearms!");
         else
             DisplayText(guideText, "RAISE");
 
         if (isInitRehabilitation) {
-            // Display count, count gauge and score text
+            // Display UI(count, count gauge and score)
             countText.SetActive(true);
             countGauge.SetActive(true);
             scoreText.SetActive(true);
@@ -266,12 +221,12 @@ public class Facilitator : MonoBehaviour
             DetectCollision4HAND_LR_UPPER();
 
         } // end if
-    } // end Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles()
+    } // end Raise_Hands()
 
-    private void Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles(){
+    private void Lower_Hands(){
         // Display guide text
-        if (remainingTimes >= maxTimes-3)
-            DisplayText(guideText, "Keep where your elbows are, and LOWER your forearms.");
+        if (remainingTimes >= exerciseNum-3)
+            DisplayText(guideText, "LOWER your forearms!");
         else
             DisplayText(guideText, "LOWER");
 
@@ -297,7 +252,7 @@ public class Facilitator : MonoBehaviour
  
         DetectCollision4HAND_LR_LOWER();
 
-    } // end Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles()
+    } // end Lower_Hands()
 
     private void DetectCollision4HAND_LR_UPPER() {
         bool isCollision4H_L_U = handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT;
@@ -314,61 +269,16 @@ public class Facilitator : MonoBehaviour
             handLeftUpper.SetActive(false);
             handRightUpper.SetActive(false);
 
-            // Only if elbows are raised to shoulder level
-            bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
-            bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;
             if (isInitRehabilitation) {
-                if (isCollision4E_L && isCollision4E_R) {
-                    // Add score
-                    if (!isInitRehabilitation) currentScore += 1;
+                // Good effect and audio
+                goodEffect.GetComponent<Emit>().IsEmit = true;
+                audioSource.PlayOneShot(goodAudio);
 
-                    // Good effect and audio
-                    goodEffect.GetComponent<Emit>().IsEmit = true;
-                    audioSource.PlayOneShot(goodAudio);
-
-                } else {
-                    // Bad effect and audio
-                    badEffect.GetComponent<Emit>().IsEmit = true;
-                    audioSource.PlayOneShot(badAudio);
-
-                    // Display advice text
-                    //if (!isActive4Advice) {
-                        DisplayText(adviceText, "Keep your elbows on your shoulder level.");
-                        adviceLabel.SetActive(true);
-                        isActive4Advice = true;
-
-                        Invoke("DisactivateAdviceText", 5f);
-                    //} // end if
-                } // end if
-
-            } else {        
-                if (isCollision4E_L && isCollision4E_R) {
-                    isClear4ELBOW = true;
-                } else {
-                    // Display advice text
-                    //if (!isActive4Advice) {
-                        DisplayText(adviceText, "Keep your elbows on your shoulder level.");
-                        adviceLabel.SetActive(true);
-                        isActive4Advice = true;
-
-                        Invoke("DisactivateAdviceText", 5f);
-                    //} // end if
-                } // end if
+            } else {
                 
                 if (isClear4H_LR_D_L && isClear4H_LR_M && isClear4H_LR_D_U) {
                     isClear4HAND = true;
-                } else {
-                    // Display advice text
-                    //if (!isActive4Advice) {
-                        DisplayText(adviceText, "Please make your elbows a right angle.");
-                        adviceLabel.SetActive(true);
-                        isActive4Advice = true;
 
-                        Invoke("DisactivateAdviceText", 5f);
-                    //} // end if
-                } // end if
-
-                if (isClear4ELBOW && isClear4HAND) {
                     // Add score
                     if (!isInitRehabilitation) currentScore += 1;
 
@@ -377,9 +287,14 @@ public class Facilitator : MonoBehaviour
                     audioSource.PlayOneShot(goodAudio);
 
                 } else {
-                    // Bad effect and audio
-                    badEffect.GetComponent<Emit>().IsEmit = true;
-                    audioSource.PlayOneShot(badAudio);
+                    // Display advice text
+                    //if (!isActive4Advice) {
+                        DisplayText(adviceText, "Please keep your forearms parallel.");
+                        adviceLabel.SetActive(true);
+                        isActive4Advice = true;
+
+                        Invoke("DisactivateAdviceText", 5f);
+                    //} // end if
                 } // end if
 
             } // end if
@@ -387,8 +302,8 @@ public class Facilitator : MonoBehaviour
             // To the next step
             if (isInitRehabilitation) isInitRehabilitation = false;
             isInit = true;
-            isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
-            isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
+            isStep_Raise_Hands = false;
+            isStep_Lower_Hands = true;
         } // end if
     } // end DetectCollision4HAND_LR_UPPER()
 
@@ -407,9 +322,9 @@ public class Facilitator : MonoBehaviour
             handRightDiagUpper.SetActive(false);
 
             // Audio
-            if (isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+            if (isStep_Lower_Hands) {
                 audioSource.PlayOneShot(doAudio);
-            } else if (isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+            } else if (isStep_Raise_Hands) {
                 audioSource.PlayOneShot(miAudio);
             }
 
@@ -451,9 +366,9 @@ public class Facilitator : MonoBehaviour
             handRightDiagLower.SetActive(false);
 
             // Audio
-            if (isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+            if (isStep_Lower_Hands) {
                 audioSource.PlayOneShot(miAudio);
-            } else if (isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles) {
+            } else if (isStep_Raise_Hands) {
                 audioSource.PlayOneShot(doAudio);
             }
 
@@ -475,36 +390,9 @@ public class Facilitator : MonoBehaviour
             handLeftLower.SetActive(false);
             handRightLower.SetActive(false);
 
-            // Only if elbows are raised to shoulder level
-            bool isCollision4E_L = elbowLeft.GetComponent<DetectCollision4E_L>().isCollision4ElbowLT;
-            bool isCollision4E_R = elbowRight.GetComponent<DetectCollision4E_R>().isCollision4ElbowRT;            
-            if (isCollision4E_L && isCollision4E_R) {
-                isClear4ELBOW = true;
-            } else {
-                // Display advice text
-                //if (!isActive4Advice) {
-                    DisplayText(adviceText, "Keep your elbows on your shoulder level.");
-                    adviceLabel.SetActive(true);
-                    isActive4Advice = true;
-                    
-                    Invoke("DisactivateAdviceText", 5f);
-                //} // end if
-            } // end if
-                
-            if (isClear4H_LR_D_L && isClear4H_LR_M && isClear4H_LR_D_U) {
+            if (isClear4H_LR_D_U && isClear4H_LR_M && isClear4H_LR_D_L) {
                 isClear4HAND = true;
-            } else {
-                // Display advice text
-                //if (!isActive4Advice) {
-                    DisplayText(adviceText, "Please make your elbows a right angle.");
-                    adviceLabel.SetActive(true);
-                    isActive4Advice = true;
 
-                    Invoke("DisactivateAdviceText", 5f);
-                //} // end if
-            } // end if
-
-            if (isClear4ELBOW && isClear4HAND) {
                 // Add score
                 if (!isInitRehabilitation) currentScore += 1;
 
@@ -516,12 +404,21 @@ public class Facilitator : MonoBehaviour
                 // Bad effect and audio
                 badEffect.GetComponent<Emit>().IsEmit = true;
                 audioSource.PlayOneShot(badAudio);
+
+                // Display advice text
+                //if (!isActive4Advice) {
+                    DisplayText(adviceText, "Please keep your forearms parallel.");
+                    adviceLabel.SetActive(true);
+                    isActive4Advice = true;
+
+                    Invoke("DisactivateAdviceText", 5f);
+                //} // end if
             } // end if
 
             // To the next step
             isInit = true;
-            isStep_Lower_Hands_with_Elbows_and_Hands_are_at_Right_Angles = false;
-            isStep_Raise_Hands_with_Elbows_and_Hands_are_at_Right_Angles = true;
+            isStep_Lower_Hands = false;
+            isStep_Raise_Hands = true;
         } // end if
     } // end DetectCollision4HAND_LR_LOWER()
 
@@ -532,7 +429,6 @@ public class Facilitator : MonoBehaviour
         isClear4H_LR_D_L    = false;
         //isClear4H_LR_L    = false;
 
-        isClear4ELBOW       = false;
         isClear4HAND        = false;
     }
 

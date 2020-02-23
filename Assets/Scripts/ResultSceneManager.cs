@@ -37,15 +37,14 @@ public class ResultSceneManager : MonoBehaviour
 
         // Exp
         expSlider.value = 0.0f;
-        TitleSceneManager.expCurValue += (int)Facilitator.getCurrentScore();
+        TitleSceneManager.expCurValue += (int)Facilitator.GetCurrentScore();
         //TitleSceneManager.expCurValue += 50;
         expPercent = TitleSceneManager.expCurValue / expMaxValue;
         expCurValueText.text = (expMaxValue * expPercent).ToString();
         expMaxValueText.text = (expMaxValue).ToString();
 
         // Circle Slider
-        circleSlider[0].Rate = Facilitator.getAccuracyRate();
-        //circleSlider[0].Rate = 0.8f;
+        circleSlider[0].Rate = Facilitator.GetAccuracyRate();
         circleSlider[1].Rate = 1.0f;
         circleSlider[2].Rate = 0.0f;
 

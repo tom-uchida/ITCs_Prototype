@@ -18,6 +18,7 @@ public class TitleSceneManager : MonoBehaviour
     // Number of Exercises
     [SerializeField] Slider exerciseNumSlider = null;
     [SerializeField] Text exerciseNumText     = null;
+    public static int currentExerciseNum;
 
     private int expCumValue;
     public static int expCurValue;
@@ -27,7 +28,8 @@ public class TitleSceneManager : MonoBehaviour
         expCurValue = 0;
 
         // Added by Kawakami
-        exerciseNumSlider.value = 10.0f;
+        exerciseNumSlider.value = (float)10;
+        currentExerciseNum = 0;
         
         // Load score
         expCumValue = PlayerPrefs.GetInt("Exp");
@@ -53,13 +55,14 @@ public class TitleSceneManager : MonoBehaviour
         }
 
         // Added by Kawakami
-        exerciseNumText.text = exerciseNumSlider.value.ToString();
+        currentExerciseNum = (int)exerciseNumSlider.value;
+        exerciseNumText.text = currentExerciseNum.ToString();
     }
 
     // Added by Kawakami
-    public float GetExerciseNum()
+    public static float GetCurrentExerciseNum()
     {
-        return exerciseNumSlider.value;
+        return (float)currentExerciseNum;
     }
 
 	public void ToMainScene() {
