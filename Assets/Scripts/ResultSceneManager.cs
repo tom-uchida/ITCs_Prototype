@@ -28,6 +28,10 @@ public class ResultSceneManager : MonoBehaviour
     public AudioClip gageupAudio;
 
     private bool[] isFinishedAll;
+
+    // Exercise name
+    private string exerciseCurName;
+    private GameObject exerciseName;
     
     void Start()
     {
@@ -35,19 +39,31 @@ public class ResultSceneManager : MonoBehaviour
         isFinishedExpSliderAnimation = false;
         timeElapsed = 0.0f;
 
+        // Exercise name
+        exerciseName = GameObject.Find("ExerciseName");
+        exerciseCurName = TitleSceneManager.GetCurrentExerciseName();
+
         // Exp
         expSlider.value = 0.0f;
-        TitleSceneManager.expCurValue += (int)Facilitator.GetCurrentScore();
-        //TitleSceneManager.expCurValue += 50;
+        if (exerciseCurName == "Raise and Lower Exercise") {
+            TitleSceneManager.expCurValue += Facilitator.GetCurrentScore();
+        } else if (exerciseCurName == "Raise and Lower Exercise (Elbowless version)") {
+            TitleSceneManager.expCurValue += Facilitator4RL_Elbowless.GetCurrentScore();
+        }
         expPercent = TitleSceneManager.expCurValue / expMaxValue;
         expCurValueText.text = (expMaxValue * expPercent).ToString();
         expMaxValueText.text = (expMaxValue).ToString();
 
         // Circle Slider
-        circleSlider[0].Rate = Facilitator.GetAccuracyRate();
+        if (exerciseCurName == "Raise and Lower Exercise") {
+            circleSlider[0].Rate = (float)Facilitator.GetAccuracyRate();
+        } else if (exerciseCurName == "Raise and Lower Exercise (Elbowless version)") {
+            circleSlider[0].Rate = (float)Facilitator4RL_Elbowless.GetAccuracyRate();
+        }
         circleSlider[1].Rate = 1.0f;
         circleSlider[2].Rate = 0.0f;
 
+        // Audio
         audioSource = GetComponent<AudioSource>();
         isFinishedAll = new bool[circleSlider.Length];
     }
@@ -55,6 +71,9 @@ public class ResultSceneManager : MonoBehaviour
     void Update()
     {
         timeElapsed += Time.deltaTime;
+
+        // Exercise name
+        exerciseName.GetComponent<Text>().text = exerciseCurName;
 
         // Exp slider animation
         if (timeElapsed >= 1.0f) {
@@ -68,7 +87,7 @@ public class ResultSceneManager : MonoBehaviour
         // Get status
         for (int i = 0; i < circleSlider.Length; i++) {
             isFinishedAll[i] = circleSlider[i].GetIsFinishedCircleSliderAnimation();
-        } // end for
+        }
 
         // Stop audio
         if (isFinishedAll.All( value => value == true )) audioSource.Stop();

@@ -22,6 +22,7 @@ public class TitleSceneManager : MonoBehaviour
 
     private int expCumValue;
     public static int expCurValue;
+    public static string exerciseName;
 
     void Awake() {
         expSlider.value = 0.0f;
@@ -50,7 +51,7 @@ public class TitleSceneManager : MonoBehaviour
     void Update()
     {
         // Reset cumulaive exp
-        if (Input.GetKeyDown(KeyCode.R)){
+        if (Input.GetKeyDown(KeyCode.R)) {
             PlayerPrefs.DeleteKey("Exp");
         }
 
@@ -60,18 +61,23 @@ public class TitleSceneManager : MonoBehaviour
     }
 
     // Added by Kawakami
-    public static float GetCurrentExerciseNum()
-    {
+    public static float GetCurrentExerciseNum() {
         return (float)currentExerciseNum;
     }
 
-	public void ToMainScene() {
-		SceneManager.LoadScene ("Main");
+    public void StartRaiseLowerExercise() {
+        exerciseName = "Raise and Lower Exercise";
+		SceneManager.LoadScene ("Raise_Lower");
 	}
 
-    public void ToRaiseLowerElbowlessScene() {
+    public void StartRaiseLowerElbowlessExercise() {
+        exerciseName = "Raise and Lower Exercise (Elbowless version)";
 		SceneManager.LoadScene ("Raise_Lower_Elbowless");
 	}
+
+    public static string  GetCurrentExerciseName() {
+        return exerciseName;
+    }
 
     // End
     public void EndGame() {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace com.rfilkov.kinect
 {
@@ -2579,7 +2580,9 @@ namespace com.rfilkov.kinect
                 // display the image on screen
                 if(imageTex != null)
                 {
-                    KinectInterop.DisplayGuiTexture(i, displayImageWidthPercent, imageScale, imageTex);
+                    if (SceneManager.GetActiveScene().name != "Title" && SceneManager.GetActiveScene().name != "Result"){
+                        KinectInterop.DisplayGuiTexture(i, displayImageWidthPercent, imageScale, imageTex);
+                    }
                 }
             }
         }

@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class Facilitator4RL_Elbowless : MonoBehaviour
 {
     private GameObject userModel;
-    private GameObject gestureListener;
     private GameObject kinectController;
 
     private GameObject parentObject;
@@ -43,12 +42,12 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
     private bool isInit;
     private bool isStep_Raise_Hands;
     private bool isStep_Lower_Hands;
-    private bool isActive4Advice;
+    //private bool isActive4Advice;
     private bool isInitRehabilitation;
     private bool isClear4H_LR_D_U;
     private bool isClear4H_LR_M;
     private bool isClear4H_LR_D_L;
-    private bool isClear4HAND;
+    //private bool isClear4HAND;
 
     private AudioSource audioSource;
     public AudioClip goodAudio, badAudio, finishAudio;
@@ -60,7 +59,6 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
     void Awake()
     {
         userModel          = GameObject.Find("User_back");
-        gestureListener    = GameObject.Find("GestureListener");
         kinectController   = GameObject.Find("KinectController");
 
         handLeftUpper      = GameObject.Find("HAND_LEFT_UPPER");
@@ -99,12 +97,12 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
         isInit = true; 
         isStep_Raise_Hands = true;
         isStep_Lower_Hands = false;
-        isActive4Advice = false;
+        //isActive4Advice = false;
         isInitRehabilitation = true;
         isClear4H_LR_D_U    = false;
         isClear4H_LR_M      = false;
         isClear4H_LR_D_L    = false;
-        isClear4HAND        = false;
+        //isClear4HAND        = false;
 
         countGauge.SetActive(false);
         countGauge.GetComponent<Image>().fillAmount = 1.0f;
@@ -125,6 +123,7 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
     void Start()
     {
         userModel.SetActive(true);
+        //kinectController.SetActive(true);
     }
 
     // Update is called once per frame
@@ -277,7 +276,7 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
             } else {
                 
                 if (isClear4H_LR_D_L && isClear4H_LR_M && isClear4H_LR_D_U) {
-                    isClear4HAND = true;
+                    //isClear4HAND = true;
 
                     // Add score
                     if (!isInitRehabilitation) currentScore += 1;
@@ -287,11 +286,15 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
                     audioSource.PlayOneShot(goodAudio);
 
                 } else {
+                    // Bad effect and audio
+                    badEffect.GetComponent<Emit>().IsEmit = true;
+                    audioSource.PlayOneShot(badAudio);
+
                     // Display advice text
                     //if (!isActive4Advice) {
                         DisplayText(adviceText, "Please keep your forearms parallel.");
                         adviceLabel.SetActive(true);
-                        isActive4Advice = true;
+                        //isActive4Advice = true;
 
                         Invoke("DisactivateAdviceText", 5f);
                     //} // end if
@@ -391,7 +394,7 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
             handRightLower.SetActive(false);
 
             if (isClear4H_LR_D_U && isClear4H_LR_M && isClear4H_LR_D_L) {
-                isClear4HAND = true;
+                //isClear4HAND = true;
 
                 // Add score
                 if (!isInitRehabilitation) currentScore += 1;
@@ -409,7 +412,7 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
                 //if (!isActive4Advice) {
                     DisplayText(adviceText, "Please keep your forearms parallel.");
                     adviceLabel.SetActive(true);
-                    isActive4Advice = true;
+                    //isActive4Advice = true;
 
                     Invoke("DisactivateAdviceText", 5f);
                 //} // end if
@@ -429,11 +432,11 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
         isClear4H_LR_D_L    = false;
         //isClear4H_LR_L    = false;
 
-        isClear4HAND        = false;
+        //isClear4HAND        = false;
     }
 
     private void DisactivateAdviceText() {
-        isActive4Advice = false;
+        //isActive4Advice = false;
         adviceLabel.SetActive(false);
     }
 
@@ -442,18 +445,17 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
     }
 
     private void LoadResultScene() {
-        userModel.SetActive(false);
-        gestureListener.SetActive(false);
-        kinectController.SetActive(false);
+        //userModel.SetActive(false);
+        //kinectController.SetActive(false);
         SceneManager.LoadScene("Result");
     }
 
-    public static float GetCurrentScore() {
-        return (float)currentScore;
+    public static int GetCurrentScore() {
+        return currentScore;
     }
 
-    public static float GetAccuracyRate() {
-        return (float)currentScore / (float)maxTimes;
+    public static int GetAccuracyRate() {
+        return currentScore / maxTimes;
     }
     
 } // end class

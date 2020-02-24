@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class Facilitator : MonoBehaviour
 {
     private GameObject userModel;
-    private GameObject gestureListener;
     private GameObject kinectController;
 
     private GameObject parentObject;
@@ -66,7 +65,6 @@ public class Facilitator : MonoBehaviour
     void Awake()
     {
         userModel          = GameObject.Find("User_back");
-        gestureListener    = GameObject.Find("GestureListener");
         kinectController   = GameObject.Find("KinectController");
 
         elbowLeft          = GameObject.Find("ELBOW_LEFT");
@@ -137,6 +135,7 @@ public class Facilitator : MonoBehaviour
     void Start()
     {
         userModel.SetActive(true);
+        //kinectController.SetActive(true);
     }
 
     // Update is called once per frame
@@ -546,18 +545,17 @@ public class Facilitator : MonoBehaviour
     }
 
     private void LoadResultScene() {
-        userModel.SetActive(false);
-        gestureListener.SetActive(false);
-        kinectController.SetActive(false);
+        //userModel.SetActive(false);
+        //kinectController.SetActive(false);
         SceneManager.LoadScene("Result");
     }
 
-    public static float GetCurrentScore() {
-        return (float)currentScore;
+    public static int GetCurrentScore() {
+        return currentScore;
     }
 
-    public static float GetAccuracyRate() {
-        return (float)currentScore / (float)maxTimes;
+    public static int GetAccuracyRate() {
+        return currentScore / maxTimes;
     }
     
 } // end class
