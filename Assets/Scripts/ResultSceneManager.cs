@@ -20,6 +20,8 @@ public class ResultSceneManager : MonoBehaviour
     //[SerializeField] [Range(0.0f, 1.0f)] float[] percent = null;
     //[SerializeField] [Range(0.0f, 1.0f)] float[] rate = null;
 
+    [SerializeField] Text avgTimeText = null; 
+
     private bool isInit;
     public static bool isFinishedExpSliderAnimation;
     private float timeElapsed;
@@ -43,6 +45,15 @@ public class ResultSceneManager : MonoBehaviour
         exerciseName = GameObject.Find("ExerciseName");
         exerciseCurName = TitleSceneManager.GetCurrentExerciseName();
 
+        // Avg time
+        if (exerciseCurName == "Raise and Lower Exercise") {
+            float tmp = (float)Facilitator.GetAvgProcessingTime() * 0.001f;
+            avgTimeText.text = tmp.ToString("f1") + "(s)";
+        } else if (exerciseCurName == "Raise and Lower Exercise (Elbowless version)") {
+            float tmp = (float)Facilitator4RL_Elbowless.GetAvgProcessingTime() * 0.001f;
+            avgTimeText.text = tmp.ToString("f1") + "(s)";
+        }
+
         // Exp
         expSlider.value = 0.0f;
         if (exerciseCurName == "Raise and Lower Exercise") {
@@ -56,9 +67,9 @@ public class ResultSceneManager : MonoBehaviour
 
         // Circle Slider
         if (exerciseCurName == "Raise and Lower Exercise") {
-            circleSlider[0].Rate = (float)Facilitator.GetAccuracyRate();
+            circleSlider[0].Rate = Facilitator.GetAccuracyRate();
         } else if (exerciseCurName == "Raise and Lower Exercise (Elbowless version)") {
-            circleSlider[0].Rate = (float)Facilitator4RL_Elbowless.GetAccuracyRate();
+            circleSlider[0].Rate = Facilitator4RL_Elbowless.GetAccuracyRate();
         }
         circleSlider[1].Rate = 1.0f;
         circleSlider[2].Rate = 0.0f;

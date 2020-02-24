@@ -62,6 +62,12 @@ public class Facilitator : MonoBehaviour
     // Added by Kawakami
     private int exerciseNum;
 
+    // Timer
+    System.Diagnostics.Stopwatch sw;
+    private long[] processingTimes;
+    public static long avgProcessingTime;
+
+
     void Awake()
     {
         userModel          = GameObject.Find("User_back");
@@ -128,7 +134,12 @@ public class Facilitator : MonoBehaviour
         currentScore = 0;
         adviceLabel.SetActive(false);
 
+        // Audio
         audioSource = GetComponent<AudioSource>();
+
+        // Timer
+        sw = new System.Diagnostics.Stopwatch();
+        processingTimes = new long[maxTimes];
     }
 
     // Start is called before the first frame update
@@ -168,6 +179,16 @@ public class Facilitator : MonoBehaviour
                 if (remainingTimes == 0) {
                     isFinishedRehabilitation = true;
 
+                    // Calc average processing time
+                    long tmpSum = 0;
+                    for (int i = 0; i < processingTimes.Length; i++) {
+                        tmpSum += processingTimes[i];
+                        Debug.Log(i + ": " + processingTimes[i] + " [ms]");
+                    }
+                    avgProcessingTime = tmpSum / maxTimes;
+                    // Debug.Log(avgProcessingTime + " [ms]");
+                    // Debug.Log(avgProcessingTime/1000 + " [s]");
+
                     // Display finish message
                     // guideText.GetComponent<Text>().fontSize = 150;
                     guideText.GetComponent<Text>().text = "";
@@ -199,6 +220,9 @@ public class Facilitator : MonoBehaviour
             isInit = false;
             elbowLeft.SetActive(true);
             elbowRight.SetActive(true);
+
+            // Start timer
+            sw.Start();
         } // end if
             
         // Check if elbows are raised to shoulder level
@@ -235,6 +259,9 @@ public class Facilitator : MonoBehaviour
                 isInit = false;
                 handLeftUpper.SetActive(true);
                 handRightUpper.SetActive(true);
+
+                // Start timer
+                sw.Start();
             } // end if
 
             // Detect collision for HAND_LR_UPPER
@@ -254,6 +281,9 @@ public class Facilitator : MonoBehaviour
                 handRightDiagUpper.SetActive(true);
                 handLeftUpper.SetActive(true);
                 handRightUpper.SetActive(true);
+
+                // Start timer
+                sw.Start();
             } // end if
 
             DetectCollision4HAND_LR_DIAG_LOWER();
@@ -286,6 +316,9 @@ public class Facilitator : MonoBehaviour
             handRightDiagLower.SetActive(true);
             handLeftLower.SetActive(true);
             handRightLower.SetActive(true);
+
+            // Start timer
+            sw.Start();
         } // end if
 
         DetectCollision4HAND_LR_DIAG_UPPER();
@@ -302,6 +335,11 @@ public class Facilitator : MonoBehaviour
         bool isCollision4H_L_U = handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT;
         bool isCollision4H_R_U = handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT;
         if (isCollision4H_L_U && isCollision4H_R_U) {
+            // Stop timer
+            sw.Stop();
+            processingTimes[maxTimes-remainingTimes] = sw.ElapsedMilliseconds;
+            sw.Reset();
+
             // Count the number of times
             if (!isInitRehabilitation) remainingTimes -= 1;
 
@@ -463,6 +501,11 @@ public class Facilitator : MonoBehaviour
         bool isCollision4H_L_L = handLeftLower.GetComponent<DetectCollision4H_L_L>().isCollision4HandLT;
         bool isCollision4H_R_L = handRightLower.GetComponent<DetectCollision4H_R_L>().isCollision4HandRT;
         if (isCollision4H_L_L && isCollision4H_R_L) {
+            // Stop timer
+            sw.Stop();
+            processingTimes[maxTimes-remainingTimes] = sw.ElapsedMilliseconds;
+            sw.Reset();
+
             // Count the number of times
             remainingTimes -= 1;
 
@@ -554,8 +597,12 @@ public class Facilitator : MonoBehaviour
         return currentScore;
     }
 
-    public static int GetAccuracyRate() {
-        return currentScore / maxTimes;
+    public static float GetAccuracyRate() {
+        return (float)currentScore / (float)maxTimes;
+    }
+
+    public static long GetAvgProcessingTime() {
+        return avgProcessingTime;
     }
     
 } // end class

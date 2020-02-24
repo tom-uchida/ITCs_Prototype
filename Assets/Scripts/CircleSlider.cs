@@ -23,7 +23,7 @@ public class CircleSlider : MonoBehaviour
     {
         timeElapsed = 0.0f;
         isFinishedCircleSliderAnimation = false;
-        percent.text = (rate*100.0f).ToString() + "%";
+        percent.text = (rate*100.0f).ToString("f0") + "%";
     }
 
     void Update()

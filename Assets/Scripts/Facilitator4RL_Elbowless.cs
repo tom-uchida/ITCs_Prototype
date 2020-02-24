@@ -56,6 +56,11 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
     // Added by Kawakami
     private int exerciseNum;
 
+    // Timer
+    System.Diagnostics.Stopwatch sw;
+    private long[] processingTimes;
+    public static long avgProcessingTime;
+
     void Awake()
     {
         userModel          = GameObject.Find("User_back");
@@ -116,7 +121,12 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
         currentScore = 0;
         adviceLabel.SetActive(false);
 
+        // Audio
         audioSource = GetComponent<AudioSource>();
+
+        // Timer
+        sw = new System.Diagnostics.Stopwatch();
+        processingTimes = new long[maxTimes];
     }
 
     // Start is called before the first frame update
@@ -150,6 +160,16 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
             // To the result scene
             if (remainingTimes == 0) {
                 isFinishedRehabilitation = true;
+
+                // Calc average processing time
+                long tmpSum = 0;
+                for (int i = 0; i < processingTimes.Length; i++) {
+                    tmpSum += processingTimes[i];
+                    Debug.Log(i + ": " + processingTimes[i] + " [ms]");
+                }
+                avgProcessingTime = tmpSum / maxTimes;
+                // Debug.Log(avgProcessingTime + " [ms]");
+                // Debug.Log(avgProcessingTime/1000 + " [s]");
 
                 // Display finish message
                 // guideText.GetComponent<Text>().fontSize = 150;
@@ -190,6 +210,9 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
                 isInit = false;
                 handLeftUpper.SetActive(true);
                 handRightUpper.SetActive(true);
+
+                // Start timer
+                sw.Start();
             } // end if
 
             // Detect collision for HAND_LR_UPPER
@@ -209,6 +232,9 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
                 handRightDiagUpper.SetActive(true);
                 handLeftUpper.SetActive(true);
                 handRightUpper.SetActive(true);
+
+                // Start timer
+                sw.Start();
             } // end if
 
             DetectCollision4HAND_LR_DIAG_LOWER();
@@ -241,6 +267,9 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
             handRightDiagLower.SetActive(true);
             handLeftLower.SetActive(true);
             handRightLower.SetActive(true);
+
+            // Start timer
+            sw.Start();
         } // end if
 
         DetectCollision4HAND_LR_DIAG_UPPER();
@@ -257,6 +286,11 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
         bool isCollision4H_L_U = handLeftUpper.GetComponent<DetectCollision4H_L_U>().isCollision4HandLT;
         bool isCollision4H_R_U = handRightUpper.GetComponent<DetectCollision4H_R_U>().isCollision4HandRT;
         if (isCollision4H_L_U && isCollision4H_R_U) {
+            // Stop timer
+            sw.Stop();
+            processingTimes[maxTimes-remainingTimes] = sw.ElapsedMilliseconds;
+            sw.Reset();
+
             // Count the number of times
             if (!isInitRehabilitation) remainingTimes -= 1;
 
@@ -291,13 +325,9 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
                     audioSource.PlayOneShot(badAudio);
 
                     // Display advice text
-                    //if (!isActive4Advice) {
-                        DisplayText(adviceText, "Please keep your forearms parallel.");
-                        adviceLabel.SetActive(true);
-                        //isActive4Advice = true;
-
-                        Invoke("DisactivateAdviceText", 5f);
-                    //} // end if
+                    DisplayText(adviceText, "Please keep your forearms parallel.");
+                    adviceLabel.SetActive(true);
+                    Invoke("DisactivateAdviceText", 5.0f);
                 } // end if
 
             } // end if
@@ -382,6 +412,11 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
         bool isCollision4H_L_L = handLeftLower.GetComponent<DetectCollision4H_L_L>().isCollision4HandLT;
         bool isCollision4H_R_L = handRightLower.GetComponent<DetectCollision4H_R_L>().isCollision4HandRT;
         if (isCollision4H_L_L && isCollision4H_R_L) {
+            // Stop timer
+            sw.Stop();
+            processingTimes[maxTimes-remainingTimes] = sw.ElapsedMilliseconds;
+            sw.Reset();
+
             // Count the number of times
             remainingTimes -= 1;
 
@@ -394,8 +429,6 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
             handRightLower.SetActive(false);
 
             if (isClear4H_LR_D_U && isClear4H_LR_M && isClear4H_LR_D_L) {
-                //isClear4HAND = true;
-
                 // Add score
                 if (!isInitRehabilitation) currentScore += 1;
 
@@ -409,13 +442,9 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
                 audioSource.PlayOneShot(badAudio);
 
                 // Display advice text
-                //if (!isActive4Advice) {
-                    DisplayText(adviceText, "Please keep your forearms parallel.");
-                    adviceLabel.SetActive(true);
-                    //isActive4Advice = true;
-
-                    Invoke("DisactivateAdviceText", 5f);
-                //} // end if
+                DisplayText(adviceText, "Please keep your forearms parallel.");
+                adviceLabel.SetActive(true);
+                Invoke("DisactivateAdviceText", 5.0f);
             } // end if
 
             // To the next step
@@ -426,13 +455,9 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
     } // end DetectCollision4HAND_LR_LOWER()
 
     private void ResetIsClear() {
-        //isClear4H_LR_U    = false;
         isClear4H_LR_D_U    = false;
         isClear4H_LR_M      = false;
         isClear4H_LR_D_L    = false;
-        //isClear4H_LR_L    = false;
-
-        //isClear4HAND        = false;
     }
 
     private void DisactivateAdviceText() {
@@ -454,8 +479,12 @@ public class Facilitator4RL_Elbowless : MonoBehaviour
         return currentScore;
     }
 
-    public static int GetAccuracyRate() {
-        return currentScore / maxTimes;
+    public static float GetAccuracyRate() {
+        return (float)currentScore / (float)maxTimes;
+    }
+
+    public static long GetAvgProcessingTime() {
+        return avgProcessingTime;
     }
     
 } // end class
