@@ -18,16 +18,19 @@ public class TitleSceneManager : MonoBehaviour
     // Number of Exercises
     [SerializeField] Slider exerciseNumSlider = null;
     [SerializeField] Text exerciseNumText     = null;
+    public static int currentExerciseNum;
 
     private int expCumValue;
     public static int expCurValue;
+    public static string exerciseName;
 
     void Awake() {
         expSlider.value = 0.0f;
         expCurValue = 0;
 
         // Added by Kawakami
-        exerciseNumSlider.value = 10.0f;
+        exerciseNumSlider.value = (float)10;
+        currentExerciseNum = 0;
         
         // Load score
         expCumValue = PlayerPrefs.GetInt("Exp");
@@ -48,23 +51,33 @@ public class TitleSceneManager : MonoBehaviour
     void Update()
     {
         // Reset cumulaive exp
-        if (Input.GetKeyDown(KeyCode.R)){
+        if (Input.GetKeyDown(KeyCode.R)) {
             PlayerPrefs.DeleteKey("Exp");
         }
 
         // Added by Kawakami
-        exerciseNumText.text = exerciseNumSlider.value.ToString() + "/20";
+        currentExerciseNum = (int)exerciseNumSlider.value;
+        exerciseNumText.text = currentExerciseNum.ToString();
     }
 
     // Added by Kawakami
-    public float GetExerciseNum()
-    {
-        return exerciseNumSlider.value;
+    public static float GetCurrentExerciseNum() {
+        return (float)currentExerciseNum;
     }
 
-	public void ToMainScene() {
-		SceneManager.LoadScene ("Main");
+    public void StartRaiseLowerExercise() {
+        exerciseName = "Raise and Lower Exercise";
+		SceneManager.LoadScene ("Raise_Lower");
 	}
+
+    public void StartRaiseLowerElbowlessExercise() {
+        exerciseName = "Raise and Lower Exercise (Elbowless version)";
+		SceneManager.LoadScene ("Raise_Lower_Elbowless");
+	}
+
+    public static string  GetCurrentExerciseName() {
+        return exerciseName;
+    }
 
     // End
     public void EndGame() {
